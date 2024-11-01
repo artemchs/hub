@@ -1,0 +1,227 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+    provider = "prisma-client-js"
+}
+
+datasource db {
+    provider = "postgresql"
+    // NOTE: When using mysql or sqlserver, uncomment the @db.Text annotations in model Account below
+    // Further reading:
+    // https://next-auth.js.org/adapters/prisma#create-the-prisma-schema
+    // https://www.prisma.io/docs/reference/api-reference/prisma-schema-reference#string
+    url      = env("DATABASE_URL")
+}
+
+enum AsyncJobStatus {
+    PENDING // Job is waiting to be processed
+    PROCESSING // Job is being processed
+    COMPLETED // Job has been processed successfully
+    FAILED // Job has been processed with an error
+}
+
+// Necessary for Next auth
+model Account {
+    id                       String  @id @default(cuid())
+    userId                   String
+    type                     String
+    provider                 String
+    providerAccountId        String
+    refresh_token            String? @db.Text
+    access_token             String? @db.Text
+    expires_at               Int?
+    token_type               String?
+    scope                    String?
+    id_token                 String? @db.Text
+    session_state            String?
+    user                     User    @relation(fields: [userId], references: [id], onDelete: Cascade)
+    refresh_token_expires_in Int?
+
+    @@unique([provider, providerAccountId])
+}
+
+model Session {
+    id String @id @default(cuid())
+
+    sessionToken String   @unique
+    userId       String
+    expires      DateTime
+
+    user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+model User {
+    id String @id @default(cuid())
+
+    name          String?
+    email         String?   @unique
+    emailVerified DateTime?
+    image         String?
+
+    accounts Account[]
+    sessions Session[]
+}
+
+model VerificationToken {
+    identifier String
+    token      String   @unique
+    expires    DateTime
+
+    @@unique([identifier, token])
+}
+
+model Good {
+    id        String   @id @default(cuid())
+    createdAt DateTime @default(now())
+    updatedAt DateTime @updatedAt
+
+    name                 String
+    sku                  String
+    description          String                     @default("") @db.Text
+    fullPrice            Decimal                    @default(0) @db.Decimal(10, 2)
+    price                Decimal                    @default(0) @db.Decimal(10, 2)
+    quantity             Int                        @default(0)
+    tags                 GoodsTag[]
+    category             GoodsCategory?             @relation(fields: [categoryId], references: [id])
+    categoryId           String?
+    group                GoodsGroup?                @relation(fields: [groupId], references: [id])
+    groupId              String?
+    attributeValues      GoodsAttributeValue[]
+    idValues             GoodsIdValue[]
+    characteristicValues GoodsCharacteristicValue[]
+    mediaToGood          GoodsMediaToGood[]
+}
+
+model GoodsGroup {
+    id        String   @id @default(cuid())
+    createdAt DateTime @default(now())
+    updatedAt DateTime @updatedAt
+
+    name  String
+    goods Good[]
+}
+
+model GoodsMedia {
+    id        String   @id @default(cuid())
+    createdAt DateTime @default(now())
+    updatedAt DateTime @updatedAt
+
+    key         String
+    mediaToGood GoodsMediaToGood[]
+}
+
+model GoodsMediaToGood {
+    media   GoodsMedia @relation(fields: [mediaId], references: [id], onDelete: Cascade)
+    mediaId String
+    good    Good       @relation(fields: [goodId], references: [id], onDelete: Cascade)
+    goodId  String
+
+    index Int
+
+    @@id([mediaId, goodId, index])
+}
+
+model GoodsAttribute {
+    id        String   @id @default(cuid())
+    createdAt DateTime @default(now())
+    updatedAt DateTime @updatedAt
+
+    name   String
+    values GoodsAttributeValue[]
+}
+
+model GoodsAttributeValue {
+    id        String   @id @default(cuid())
+    createdAt DateTime @default(now())
+    updatedAt DateTime @updatedAt
+
+    value       String
+    goods       Good[]
+    attribute   GoodsAttribute? @relation(fields: [attributeId], references: [id])
+    attributeId String?
+}
+
+model GoodsId {
+    id        String   @id @default(cuid())
+    createdAt DateTime @default(now())
+    updatedAt DateTime @updatedAt
+
+    name   String
+    values GoodsIdValue[]
+}
+
+model GoodsIdValue {
+    id        String   @id @default(cuid())
+    createdAt DateTime @default(now())
+    updatedAt DateTime @updatedAt
+
+    value     String
+    goods     Good[]
+    goodsId   GoodsId? @relation(fields: [goodsIdId], references: [id])
+    goodsIdId String?
+}
+
+model GoodsCharacteristic {
+    id        String   @id @default(cuid())
+    createdAt DateTime @default(now())
+    updatedAt DateTime @updatedAt
+
+    name   String
+    values GoodsCharacteristicValue[]
+}
+
+model GoodsCharacteristicValue {
+    id        String   @id @default(cuid())
+    createdAt DateTime @default(now())
+    updatedAt DateTime @updatedAt
+
+    value            String
+    goods            Good[]
+    characteristic   GoodsCharacteristic? @relation(fields: [characteristicId], references: [id])
+    characteristicId String?
+}
+
+model GoodsTag {
+    id        String   @id @default(cuid())
+    createdAt DateTime @default(now())
+    updatedAt DateTime @updatedAt
+
+    name  String
+    goods Good[]
+}
+
+model GoodsCategory {
+    id        String   @id @default(cuid())
+    createdAt DateTime @default(now())
+    updatedAt DateTime @updatedAt
+
+    name        String
+    description String?
+    goods       Good[]
+    parentId    String?
+    parent      GoodsCategory?  @relation("CategoryHierarchy", fields: [parentId], references: [id])
+    children    GoodsCategory[] @relation("CategoryHierarchy")
+}
+
+model GoodsImport {
+    id        String   @id @default(cuid())
+    createdAt DateTime @default(now())
+    updatedAt DateTime @updatedAt
+
+    status   AsyncJobStatus     @default(PENDING)
+    schema   GoodsImportSchema? @relation(fields: [schemaId], references: [id])
+    schemaId String?
+    message  String?            @db.Text
+    fileKey  String
+}
+
+model GoodsImportSchema {
+    id        String   @id @default(cuid())
+    createdAt DateTime @default(now())
+    updatedAt DateTime @updatedAt
+
+    name    String
+    schema  Json
+    imports GoodsImport[]
+}
