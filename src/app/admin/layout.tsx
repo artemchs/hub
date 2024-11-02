@@ -13,5 +13,5 @@ export default async function Layout({
     redirect("/sign-in");
   }
 
-  return <AdminShell>{children}</AdminShell>;
+  return <AdminShell session={session}>{children}</AdminShell>;
 }

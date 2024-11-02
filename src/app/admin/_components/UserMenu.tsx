@@ -3,8 +3,9 @@ import { useDisclosure } from "@mantine/hooks";
 import { UserButton } from "~/components/admin/users/user-button";
 import { SignOutModal } from "./SignOutModal";
 import { IconLogout } from "@tabler/icons-react";
+import { type Session } from "next-auth";
 
-export function UserMenu() {
+export function UserMenu({ session }: { session: Session }) {
   const [
     signOutModalOpened,
     { open: openSignOutModal, close: closeSignOutModal },
@@ -15,9 +16,9 @@ export function UserMenu() {
       <Menu shadow="md" position="top-end" withArrow>
         <Menu.Target>
           <UserButton
-            email="artemchs123@gmail.com"
-            image="https://avatars.githubusercontent.com/u/95976914?v=4&size=64"
-            name="Artem Chernysh"
+            email={session.user.email ?? ""}
+            image={session.user.image ?? ""}
+            name={session.user.name ?? ""}
           />
         </Menu.Target>
 

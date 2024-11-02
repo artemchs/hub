@@ -6,7 +6,6 @@ import { signOut } from "next-auth/react";
 export function SignOutModal({
   opened,
   close,
-  open,
 }: {
   opened: boolean;
   close: () => void;
@@ -26,7 +25,7 @@ export function SignOutModal({
               toggle();
               await signOut({
                 redirect: true,
-                redirectTo: "/",
+                redirectTo: "/sign-in",
               });
             }}
             leftSection={<IconLogout className="h-4 w-4" />}

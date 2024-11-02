@@ -15,6 +15,7 @@ import {
 } from "@tabler/icons-react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
+import { type Session } from "next-auth";
 
 const linkData = [
   {
@@ -54,7 +55,13 @@ const linkData = [
   },
 ];
 
-export function AdminShell({ children }: { children: React.ReactNode }) {
+export function AdminShell({
+  children,
+  session,
+}: {
+  children: React.ReactNode;
+  session: Session;
+}) {
   const [opened, { toggle }] = useDisclosure();
   const pathname = usePathname();
 
@@ -86,7 +93,7 @@ export function AdminShell({ children }: { children: React.ReactNode }) {
           ))}
         </AppShell.Section>
         <AppShell.Section>
-          <UserMenu />
+          <UserMenu session={session} />
         </AppShell.Section>
       </AppShell.Navbar>
       <AppShell.Main className="bg-gray-50">{children}</AppShell.Main>
