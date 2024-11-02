@@ -1,11 +1,17 @@
 import "~/styles/globals.css";
 
-import { ColorSchemeScript, MantineProvider } from "@mantine/core";
+import {
+  ColorSchemeScript,
+  createTheme,
+  DEFAULT_THEME,
+  MantineProvider,
+  mergeMantineTheme,
+} from "@mantine/core";
+import { breakpoints, colors } from "./theme";
 
 import { type Metadata } from "next";
 
 import { TRPCReactProvider } from "~/trpc/react";
-import theme from "./theme";
 import Head from "next/head";
 
 export const metadata: Metadata = {
@@ -13,6 +19,14 @@ export const metadata: Metadata = {
   description: "Hub",
   icons: [{ rel: "icon", url: "/favicon.ico" }],
 };
+
+const theme = mergeMantineTheme(
+  DEFAULT_THEME,
+  createTheme({
+    breakpoints,
+    colors,
+  })
+);
 
 export default function RootLayout({
   children,
@@ -23,7 +37,6 @@ export default function RootLayout({
         <ColorSchemeScript />
       </Head>
       <body className="antialiased">
-        {/* @ts-expect-error asdf */}
         <MantineProvider theme={theme}>
           <TRPCReactProvider>{children}</TRPCReactProvider>
         </MantineProvider>

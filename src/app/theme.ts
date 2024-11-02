@@ -1,17 +1,9 @@
-import tailwindPresetMantine from "tailwind-preset-mantine";
-import { createTheme } from "@mantine/core";
+/** Custom theme */
+import {
+  DEFAULT_THEME,
+  type MantineThemeColors,
+  type MantineBreakpointsValues,
+} from "@mantine/core";
 
-const mantineTheme = createTheme({
-  // ...your custom theme
-});
-
-const themeConfig = {
-  presets: [
-    tailwindPresetMantine({
-      mantineColors: mantineTheme.colors,
-      mantineBreakpoints: mantineTheme.breakpoints,
-    }),
-  ],
-};
-
-export default themeConfig;
+export const colors: MantineThemeColors = DEFAULT_THEME.colors;
+export const breakpoints: MantineBreakpointsValues = DEFAULT_THEME.breakpoints; 
