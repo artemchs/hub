@@ -15,5 +15,10 @@ const config: Config = {
     }),
   ],
   plugins: [],
+  theme: {
+    container: {
+      center: true,
+    },
+  },
 };
 export default config;

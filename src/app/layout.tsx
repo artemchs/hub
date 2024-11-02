@@ -36,7 +36,7 @@ export default function RootLayout({
       <Head>
         <ColorSchemeScript />
       </Head>
-      <body className="antialiased">
+      <body className="antialiased bg-gray-50">
         <MantineProvider theme={theme}>
           <TRPCReactProvider>{children}</TRPCReactProvider>
         </MantineProvider>

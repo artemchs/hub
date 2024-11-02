@@ -89,7 +89,7 @@ export function AdminShell({ children }: { children: React.ReactNode }) {
           <UserMenu />
         </AppShell.Section>
       </AppShell.Navbar>
-      <AppShell.Main>{children}</AppShell.Main>
+      <AppShell.Main className="bg-gray-50">{children}</AppShell.Main>
     </AppShell>
   );
 }
