@@ -1,16 +1,9 @@
-html,
-body {
-  padding: 0;
-  margin: 0;
-  font-family: -apple-system, BlinkMacSystemFont, Segoe UI, Roboto, Oxygen,
-    Ubuntu, Cantarell, Fira Sans, Droid Sans, Helvetica Neue, sans-serif;
-}
+@layer tw_base, mantine, tw_components, tw_utilities;
 
-a {
-  color: inherit;
-  text-decoration: none;
-}
+/* import tailwind */
+@import "tailwindcss/base" layer(tw_base);
+@import "tailwindcss/components" layer(tw_components);
+@import "tailwindcss/utilities" layer(tw_utilities);
 
-* {
-  box-sizing: border-box;
-}
+/* import mantine */
+@import "@mantine/core/styles.layer.css";
