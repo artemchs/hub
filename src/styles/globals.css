@@ -1,9 +1,11 @@
 @layer tw_base, mantine, tw_components, tw_utilities;
 
-/* import tailwind */
+/* Import Tailwind */
 @import "tailwindcss/base" layer(tw_base);
 @import "tailwindcss/components" layer(tw_components);
 @import "tailwindcss/utilities" layer(tw_utilities);
 
-/* import mantine */
-@import "@mantine/core/styles.layer.css";
+/* Import Mantine and MRT */
+@import "@mantine/core/styles.layer.css" layer(mantine);
+@import "@mantine/dates/styles.css" layer(mantine);
+@import "mantine-react-table/styles.css" layer(mantine);

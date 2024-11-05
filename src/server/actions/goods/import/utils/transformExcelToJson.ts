@@ -1,7 +1,7 @@
-import XLSX from "xlsx";
+import { read, utils } from "xlsx";
 
 export const transformExcelToJson = (file: Buffer) => {
-  const workbook = XLSX.read(file, { type: "buffer" });
+  const workbook = read(file, { type: "buffer" });
 
   const sheetName = workbook.SheetNames[0];
   if (!sheetName) {
@@ -13,6 +13,6 @@ export const transformExcelToJson = (file: Buffer) => {
     throw new Error("Sheet not found");
   }
 
-  const json = XLSX.utils.sheet_to_json(sheet);
+  const json = utils.sheet_to_json(sheet);
   return json;
 };

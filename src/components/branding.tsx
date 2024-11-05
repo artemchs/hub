@@ -8,10 +8,12 @@ export function LogotypeFullLink({ href }: { href: string }) {
       component={Link}
       variant="transparent"
       href={href}
-      className="flex items-center gap-2"
+      className="flex flex-row items-center gap-2"
     >
       <IconPackageExport className="h-8 w-8 text-primary" />
-      <Text className="text-2xl font-semibold">Hub</Text>
+      <Text size="xl" fw="bold">
+        Hub
+      </Text>
     </Box>
   );
 }

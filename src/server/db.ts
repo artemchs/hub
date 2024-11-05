@@ -1,4 +1,5 @@
-import { PrismaClient } from "@prisma/client";
+import { type Prisma, PrismaClient } from "@prisma/client";
+import { type DefaultArgs } from "@prisma/client/runtime/library";
 
 import { env } from "~/env";
 
@@ -13,5 +14,12 @@ const globalForPrisma = globalThis as unknown as {
 };
 
 export const db = globalForPrisma.prisma ?? createPrismaClient();
+
+type OmitPrismaClient = Omit<
+  PrismaClient<Prisma.PrismaClientOptions, never, DefaultArgs>,
+  "$connect" | "$disconnect" | "$on" | "$transaction" | "$use" | "$extends"
+>;
+
+export type PrismaTransaction = OmitPrismaClient;
 
 if (env.NODE_ENV !== "production") globalForPrisma.prisma = db;

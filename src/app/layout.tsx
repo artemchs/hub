@@ -13,6 +13,7 @@ import { type Metadata } from "next";
 
 import { TRPCReactProvider } from "~/trpc/react";
 import Head from "next/head";
+import MantineDatesProvider from "~/components/MantineDatesProvider";
 
 export const metadata: Metadata = {
   title: "Hub",
@@ -38,7 +39,9 @@ export default function RootLayout({
       </Head>
       <body className="antialiased bg-gray-50">
         <MantineProvider theme={theme}>
-          <TRPCReactProvider>{children}</TRPCReactProvider>
+          <MantineDatesProvider>
+            <TRPCReactProvider>{children}</TRPCReactProvider>
+          </MantineDatesProvider>
         </MantineProvider>
       </body>
     </html>

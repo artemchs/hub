@@ -1,12 +1,12 @@
 import { type PrismaTransaction } from "~/server/db";
 import { type CreateOneGoodsImportInput } from "~/utils/validation/goods/import/createOneGoodsImport";
 import { readOneGoodsImportSchema } from "./schemas/readOneGoodsImportSchema";
-import { downloadObject } from "~/utils/storage/downloadObject";
 import { transformExcelToJson } from "./utils/transformExcelToJson";
 import { validateAndParseGoodsImportSchema } from "./utils/validateAndParseGoodsImportSchema";
 import { mapJsonToGoods } from "./utils/mapJsonToGoods";
 import { uploadMappedGoodsToDb } from "./utils/uploadMappedGoodsToDb";
 import { type Storage } from "~/server/storage";
+import { downloadObject } from "~/server/utils/storage/download-object";
 
 export type GoodsImportJsonItem = Record<string, unknown>;
 
