@@ -7,6 +7,9 @@ import { goodsIdsColumns } from "./columns";
 import { MRT_Localization_RU } from "mantine-react-table/locales/ru";
 import { api } from "~/trpc/react";
 import { type ReadManyIdsInput } from "~/utils/validation/ids/readManyIds";
+import { ActionIcon, Box, Group } from "@mantine/core";
+import { IconEdit, IconTrash } from "@tabler/icons-react";
+import Link from "next/link";
 
 export function GoodsIdsTable() {
   const {
@@ -49,6 +52,27 @@ export function GoodsIdsTable() {
           children: error?.message ?? "Ошибка загрузки данных",
         }
       : undefined,
+    enableRowActions: true,
+    positionActionsColumn: "last",
+    renderRowActions: ({ row }) => (
+      <Group>
+        <ActionIcon
+          component={Link}
+          href={`/admin/ids/${row.original.id}`}
+          variant="transparent"
+          color="orange"
+        >
+          <IconEdit />
+        </ActionIcon>
+        <ActionIcon
+          color="red"
+          variant="transparent"
+          onClick={() => console.info("Delete")}
+        >
+          <IconTrash />
+        </ActionIcon>
+      </Group>
+    ),
     onColumnFiltersChange: setColumnFilters,
     onColumnFilterFnsChange: setColumnFilterFns,
     onColumnVisibilityChange: setColumnVisibility,
