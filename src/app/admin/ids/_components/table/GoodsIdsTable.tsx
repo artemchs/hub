@@ -8,6 +8,8 @@ import { MRT_Localization_RU } from "mantine-react-table/locales/ru";
 import { api } from "~/trpc/react";
 import { type ReadManyIdsInput } from "~/utils/validation/ids/readManyIds";
 import { GoodsIdsTableRowActions } from "./GoodsIdsTableRowActions";
+import { Box } from "@mantine/core";
+import { GoodsIdsTableCustomActions } from "./GoodsIdsTableCustomActions";
 
 export function GoodsIdsTable() {
   const {
@@ -50,6 +52,9 @@ export function GoodsIdsTable() {
           children: error?.message ?? "Ошибка загрузки данных",
         }
       : undefined,
+    renderTopToolbarCustomActions: ({ table }) => (
+      <GoodsIdsTableCustomActions table={table} />
+    ),
     enableRowActions: true,
     positionActionsColumn: "last",
     renderRowActions: ({ row }) => (
