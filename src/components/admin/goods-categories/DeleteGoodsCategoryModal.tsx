@@ -22,7 +22,7 @@ export function DeleteGoodsCategoryModal({
   });
 
   return (
-    <Modal opened={opened} onClose={close} title="Удалить идентификатор">
+    <Modal opened={opened} onClose={close} title="Удалить категорию">
       <Text>Вы уверены что хотите удалить эту категорию?</Text>
       <Box className="flex flex-col gap-2 lg:flex-row-reverse mt-8">
         <Button

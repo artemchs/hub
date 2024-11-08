@@ -14,7 +14,10 @@ export function UpdateGoodsId({ id }: { id: string }) {
 
   const { mutate, isPending } = api.ids.updateOne.useMutation({
     async onSuccess() {
-      await apiUtils.ids.readMany.invalidate();
+      await Promise.all([
+        apiUtils.ids.readMany.invalidate(),
+        apiUtils.ids.readOne.invalidate({ id }),
+      ]);
       router.push("/admin/ids");
     },
   });

@@ -14,7 +14,10 @@ export function UpdateGoodsCategory({ id }: { id: string }) {
 
   const { mutate, isPending } = api.categories.updateOne.useMutation({
     async onSuccess() {
-      await apiUtils.categories.readMany.invalidate();
+      await Promise.all([
+        apiUtils.categories.readMany.invalidate(),
+        apiUtils.categories.readOne.invalidate({ id }),
+      ]);
       router.push("/admin/categories");
     },
   });
@@ -37,7 +40,7 @@ export function UpdateGoodsCategory({ id }: { id: string }) {
         id,
         name: data?.name ?? "",
         description: data?.description ?? "",
-        parentId: data?.parentId ?? "",
+        parentId: data?.parentId ?? undefined,
       }}
       onSubmit={handleSubmit}
       isPending={isPending}
