@@ -200,7 +200,7 @@ model GoodsCategory {
     description String?
     goods       Good[]
     parentId    String?
-    parent      GoodsCategory?  @relation("CategoryHierarchy", fields: [parentId], references: [id])
+    parent      GoodsCategory?  @relation("CategoryHierarchy", fields: [parentId], references: [id], onDelete: Cascade)
     children    GoodsCategory[] @relation("CategoryHierarchy")
 }
 
