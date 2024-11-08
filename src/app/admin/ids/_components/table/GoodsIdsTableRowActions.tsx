@@ -3,8 +3,8 @@
 import { ActionIcon, Group } from "@mantine/core";
 import { IconEdit, IconTrash } from "@tabler/icons-react";
 import Link from "next/link";
-import { DeleteOneGoodsIdModal } from "../delete/DeleteOneGoodsIdModal";
 import { useDisclosure } from "@mantine/hooks";
+import { DeleteGoodsIdModal } from "~/components/admin/goods-ids/DeleteGoodsIdModal";
 
 export function GoodsIdsTableRowActions({ id }: { id: string }) {
   const [opened, { open, close }] = useDisclosure(false);
@@ -24,7 +24,7 @@ export function GoodsIdsTableRowActions({ id }: { id: string }) {
           <IconTrash />
         </ActionIcon>
       </Group>
-      <DeleteOneGoodsIdModal close={close} id={id} opened={opened} />
+      <DeleteGoodsIdModal close={close} id={id} opened={opened} />
     </>
   );
 }

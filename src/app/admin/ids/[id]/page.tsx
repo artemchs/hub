@@ -1,4 +1,4 @@
-import { UpdateOneGoodsId } from "./_components/UpdateOneGoodsId";
+import { UpdateGoodsId } from "~/components/admin/goods-ids/UpdateGoodsId";
 
 export default async function Page({
   params,
@@ -7,5 +7,5 @@ export default async function Page({
 }) {
   const id = (await params).id;
 
-  return <UpdateOneGoodsId id={id} />;
+  return <UpdateGoodsId id={id} />;
 }

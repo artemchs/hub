@@ -1,5 +1,5 @@
-import { CreateOneGoodsIdForm } from "./_components/CreateOneGoodsIdForm";
+import { CreateGoodsId } from "~/components/admin/goods-ids/CreateGoodsId";
 
 export default function Page() {
-  return <CreateOneGoodsIdForm />;
+  return <CreateGoodsId />;
 }

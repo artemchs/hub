@@ -4,19 +4,19 @@ import { Box, Button, Modal, Text } from "@mantine/core";
 import { IconTrash } from "@tabler/icons-react";
 import { api } from "~/trpc/react";
 
-export function DeleteOneGoodsIdModal({
+export function DeleteGoodsIdModal({
   id,
-  close,
   opened,
+  close,
 }: {
   id: string;
   opened: boolean;
   close: () => void;
 }) {
   const apiUtils = api.useUtils();
+
   const { mutate, isPending } = api.ids.deleteOne.useMutation({
     async onSuccess() {
-      close();
       await apiUtils.ids.readMany.invalidate();
     },
   });
@@ -28,17 +28,18 @@ export function DeleteOneGoodsIdModal({
         <Button
           color="red"
           className="w-full lg:w-fit"
-          onClick={() => mutate({ id })}
+          onClick={() => {
+            mutate({ id });
+            close();
+          }}
           leftSection={<IconTrash className="h-4 w-4" />}
           loading={isPending}
         >
           Удалить
         </Button>
-        <Box mr={2}>
-          <Button variant="default" className="w-full lg:w-fit" onClick={close}>
-            Отмена
-          </Button>
-        </Box>
+        <Button variant="default" className="w-full lg:w-fit" onClick={close}>
+          Отмена
+        </Button>
       </Box>
     </Modal>
   );

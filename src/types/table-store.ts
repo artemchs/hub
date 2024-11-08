@@ -5,6 +5,7 @@ import type {
   MRT_SortingState,
   MRT_VisibilityState,
 } from "mantine-react-table";
+import { StoreApi } from "zustand";
 
 export interface TableState {
   columnFilters: MRT_ColumnFiltersState;
@@ -71,3 +72,10 @@ export interface TableActions {
   ) => void;
   resetState: () => void;
 }
+
+export type TableStore = {
+  state: TableState;
+  actions: TableActions;
+};
+
+export type TableStoreApi = StoreApi<TableStore>;
