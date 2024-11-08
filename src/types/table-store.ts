@@ -1,16 +1,24 @@
 import type {
   MRT_ColumnFiltersState,
+  MRT_ColumnOrderState,
+  MRT_ColumnPinningState,
+  MRT_ColumnSizingInfoState,
+  MRT_ColumnSizingState,
   MRT_DensityState,
   MRT_FilterOption,
   MRT_SortingState,
   MRT_VisibilityState,
 } from "mantine-react-table";
-import { StoreApi } from "zustand";
+import { type StoreApi } from "zustand";
 
 export interface TableState {
   columnFilters: MRT_ColumnFiltersState;
   columnFilterFns: Record<string, MRT_FilterOption>;
   columnVisibility: MRT_VisibilityState;
+  columnPinning: MRT_ColumnPinningState;
+  columnOrder: MRT_ColumnOrderState;
+  columnSizing: MRT_ColumnSizingState;
+  columnSizingInfo: MRT_ColumnSizingInfoState;
   density: MRT_DensityState;
   globalFilter: string | undefined;
   showGlobalFilter: boolean;
@@ -39,6 +47,26 @@ export interface TableActions {
     updaterOrValue:
       | MRT_VisibilityState
       | ((prev: MRT_VisibilityState) => MRT_VisibilityState)
+  ) => void;
+  setColumnPinning: (
+    updaterOrValue:
+      | MRT_ColumnPinningState
+      | ((prev: MRT_ColumnPinningState) => MRT_ColumnPinningState)
+  ) => void;
+  setColumnOrder: (
+    updaterOrValue:
+      | MRT_ColumnOrderState
+      | ((prev: MRT_ColumnOrderState) => MRT_ColumnOrderState)
+  ) => void;
+  setColumnSizing: (
+    updaterOrValue:
+      | MRT_ColumnSizingState
+      | ((prev: MRT_ColumnSizingState) => MRT_ColumnSizingState)
+  ) => void;
+  setColumnSizingInfo: (
+    updaterOrValue:
+      | MRT_ColumnSizingInfoState
+      | ((prev: MRT_ColumnSizingInfoState) => MRT_ColumnSizingInfoState)
   ) => void;
   setDensity: (
     updaterOrValue:
@@ -73,9 +101,6 @@ export interface TableActions {
   resetState: () => void;
 }
 
-export type TableStore = {
-  state: TableState;
-  actions: TableActions;
-};
+export type TableStore = TableState & TableActions;
 
 export type TableStoreApi = StoreApi<TableStore>;

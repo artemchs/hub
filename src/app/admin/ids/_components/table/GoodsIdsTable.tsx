@@ -14,12 +14,12 @@ export function GoodsIdsTable() {
 
   const { data, isLoading, error, isError, isFetching } =
     api.ids.readMany.useQuery({
-      columnFilters: tableStore.state.columnFilters,
-      columnFilterFns: tableStore.state
-        .columnFilterFns as ReadManyIdsInput["columnFilterFns"],
-      globalFilter: tableStore.state.globalFilter,
-      sorting: tableStore.state.sorting,
-      pagination: tableStore.state.pagination,
+      columnFilters: tableStore.columnFilters,
+      columnFilterFns:
+        tableStore.columnFilterFns as ReadManyIdsInput["columnFilterFns"],
+      globalFilter: tableStore.globalFilter,
+      sorting: tableStore.sorting,
+      pagination: tableStore.pagination,
     });
 
   return (
