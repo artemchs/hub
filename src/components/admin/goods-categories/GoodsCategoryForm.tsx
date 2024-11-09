@@ -10,6 +10,7 @@ import {
   updateOneCategorySchema,
   type UpdateOneCategoryInput,
 } from "~/utils/validation/categories/updateOneCategory";
+import { GoodsCategoryCombobox } from "./GoodsCategoryCombobox";
 
 interface GoodsCategoryFormProps {
   initialValues?: UpdateOneCategoryInput;
@@ -27,8 +28,8 @@ export function GoodsCategoryForm({
   mode,
 }: GoodsCategoryFormProps) {
   const form = useForm({
-    mode: "uncontrolled",
-    initialValues: initialValues ?? { name: "" },
+    mode: "controlled",
+    initialValues: initialValues ?? { name: "", parentId: undefined },
     validate: zodResolver(
       mode === "create" ? createOneCategorySchema : updateOneCategorySchema
     ),
@@ -49,6 +50,11 @@ export function GoodsCategoryForm({
         label="Название"
         key={form.key("name")}
         {...form.getInputProps("name")}
+      />
+      <GoodsCategoryCombobox
+        id={form.values.parentId ?? null}
+        setId={(value) => form.setFieldValue("parentId", value ?? undefined)}
+        label="Родительская категория"
       />
       <Group justify="flex-end" mt="md">
         <Button variant="subtle" component={Link} href="/admin/categories">

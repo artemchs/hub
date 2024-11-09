@@ -26,6 +26,7 @@ type DataTableProps<TData extends MRT_RowData> = {
   isError?: boolean;
   isFetching?: boolean;
   errorMessage?: string;
+  tableOptions?: Partial<MRT_TableOptions<TData>>;
 };
 
 export function DataTable<TData extends MRT_RowData>({
@@ -38,6 +39,7 @@ export function DataTable<TData extends MRT_RowData>({
   isError,
   isFetching,
   errorMessage,
+  tableOptions,
 }: DataTableProps<TData>) {
   const {
     columnFilters,
@@ -75,8 +77,6 @@ export function DataTable<TData extends MRT_RowData>({
           children: errorMessage ?? "Ошибка загрузки данных",
         }
       : undefined,
-    columns,
-    data: data?.items ?? [],
     state: {
       columnFilters,
       columnFilterFns,
@@ -131,6 +131,9 @@ export function DataTable<TData extends MRT_RowData>({
       showRowsPerPage: true,
     },
     localization: MRT_Localization_RU,
+    columns,
+    data: data?.items ?? [],
+    ...tableOptions,
   });
 
   return <MantineReactTable table={table} />;

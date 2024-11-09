@@ -1,5 +1,8 @@
 import { type PrismaTransaction } from "~/server/db";
-import { type ReadManyCategoriesInput } from "~/utils/validation/categories/readManyCategories";
+import type {
+  ReadManyCategoriesInfiniteInput,
+  ReadManyCategoriesInput,
+} from "~/utils/validation/categories/readManyCategories";
 import { type Prisma } from "@prisma/client";
 import { mapColumnFilterToPrismaCondition } from "~/utils/table/mapColumnFilterToPrismaCondition";
 
@@ -50,5 +53,37 @@ export const readManyCategories = async ({
     items,
     total,
     pageCount: Math.ceil(total / payload.pagination.pageSize),
+  };
+};
+
+export const readManyCategoriesInfinite = async ({
+  tx,
+  payload,
+}: {
+  tx: PrismaTransaction;
+  payload: ReadManyCategoriesInfiniteInput;
+}) => {
+  const items = await tx.goodsCategory.findMany({
+    take: payload.limit + 1,
+    where: {
+      name: {
+        contains: payload.globalFilter,
+        mode: "insensitive",
+      },
+    },
+    cursor: payload.cursor ? { id: payload.cursor } : undefined,
+    orderBy: {
+      createdAt: "desc",
+    },
+  });
+
+  let nextCursor: typeof payload.cursor | undefined = undefined;
+  if (items.length > payload.limit) {
+    const nextItem = items.pop();
+    nextCursor = nextItem!.id;
+  }
+  return {
+    items,
+    nextCursor,
   };
 };

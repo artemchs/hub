@@ -7,42 +7,6 @@ import { create } from "zustand";
 import { persist, createJSONStorage } from "zustand/middleware";
 import type { TableState, TableActions } from "~/types/table-store";
 
-// const deserializeDates = (obj: unknown): unknown => {
-//   if (Array.isArray(obj)) {
-//     return obj.map(deserializeDates);
-//   }
-//   if (obj !== null && typeof obj === "object") {
-//     const newObj: Record<string, unknown> = {};
-//     for (const [key, value] of Object.entries(obj)) {
-//       if (Array.isArray(value)) {
-//         newObj[key] = value.map((v: string) =>
-//           typeof v === "string" && !isNaN(Date.parse(v)) ? new Date(v) : v
-//         );
-//       } else if (typeof value === "string" && !isNaN(Date.parse(value))) {
-//         const columnDef = key.split("_")[0];
-//         if (columnDef?.includes("date")) {
-//           try {
-//             const date = new Date(value);
-//             if (date instanceof Date && !isNaN(date.getTime())) {
-//               newObj[key] = date;
-//             }
-//           } catch (e) {
-//             console.warn("Failed to parse date:", value);
-//             console.error(e);
-//             newObj[key] = value;
-//           }
-//         } else {
-//           newObj[key] = value;
-//         }
-//       } else {
-//         newObj[key] = deserializeDates(value);
-//       }
-//     }
-//     return newObj;
-//   }
-//   return obj;
-// };
-
 const getDefaultFilterFn = (filterVariant?: string): MRT_FilterOption => {
   switch (filterVariant) {
     case "date-range":
@@ -189,41 +153,6 @@ export const createTableStore = <TData extends MRT_RowData>(
         name: `table-${tableId}`,
         storage: createJSONStorage(() => localStorage),
       }
-      // {
-      //   name: `table-${tableId}`,
-      //   storage: {
-      //     getItem: (
-      //       name
-      //     ): StorageValue<{
-      //       state: TableState;
-      //       actions: TableActions;
-      //     }> | null => {
-      //       const str = localStorage.getItem(name);
-      //       if (!str) return null;
-      //       const parsed = JSON.parse(str) as StorageValue<{
-      //         state: TableState;
-      //         actions: TableActions;
-      //       }>;
-
-      //       if (parsed.state?.state.columnFilters) {
-      //         parsed.state.state.columnFilters = deserializeDates(
-      //           parsed.state.state.columnFilters
-      //         ) as MRT_ColumnFiltersState;
-      //       }
-
-      //       return parsed;
-      //     },
-      //     setItem: (
-      //       name,
-      //       value: StorageValue<{ state: TableState; actions: TableActions }>
-      //     ) => {
-      //       localStorage.setItem(name, JSON.stringify(value));
-      //     },
-      //     removeItem: (name) => {
-      //       localStorage.removeItem(name);
-      //     },
-      //   },
-      // }
     )
   );
 };

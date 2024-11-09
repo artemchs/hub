@@ -1,6 +1,7 @@
 "use client";
 
 import { createMRTColumnHelper } from "mantine-react-table";
+import { DisplayGoodsCategoryName } from "~/components/admin/goods-categories/DisplayGoodsCategoryName";
 import { DisplayDate } from "~/components/DisplayDate";
 import { type RouterOutputs } from "~/trpc/react";
 
@@ -13,6 +14,19 @@ export const goodsCategoriesColumns = [
   columnHelper.accessor((row) => row.name, {
     header: "Название",
     id: "name",
+  }),
+  columnHelper.accessor((row) => row.parentId, {
+    header: "Родительская категория",
+    Cell: ({ row }) => {
+      const parentId = row.original.parentId;
+
+      if (!parentId) {
+        return "Нет";
+      }
+
+      return <DisplayGoodsCategoryName id={parentId} />;
+    },
+    id: "parentId",
   }),
   columnHelper.accessor((row) => row.createdAt, {
     header: "Дата создания",
