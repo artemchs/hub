@@ -55,7 +55,7 @@ export function SingleGoodsCharacteristicForm({
         {...form.getInputProps("name")}
       />
       <Group justify="flex-end" mt="md">
-        <Button variant="subtle" component={Link} href="/admin/categories">
+        <Button variant="subtle" component={Link} href="/admin/characteristics">
           Отменить
         </Button>
         <Button type="submit" loading={isPending}>
