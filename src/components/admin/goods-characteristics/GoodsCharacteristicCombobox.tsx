@@ -1,22 +1,22 @@
 "use client";
 
 import { api } from "~/trpc/react";
-import { DisplayGoodsCategoryName } from "./DisplayGoodsCategoryName";
 import { DataCombobox } from "~/components/DataCombobox";
+import { DisplayOneGoodsCharacteristicName } from "./DisplayOneGoodsCharacteristicName";
 
-interface GoodsCategoryComboboxProps {
+interface GoodsCharacteristicComboboxProps {
   id: string | null;
   setId: (id: string | null) => void;
   label?: string;
 }
 
-export function GoodsCategoryCombobox({
+export function GoodsCharacteristicCombobox({
   id,
   setId,
   label,
-}: GoodsCategoryComboboxProps) {
-  const useCategories = (globalFilter: string) =>
-    api.categories.readManyInfinite.useInfiniteQuery(
+}: GoodsCharacteristicComboboxProps) {
+  const useCharacteristics = (globalFilter: string) =>
+    api.characteristics.readManyInfinite.useInfiniteQuery(
       {
         globalFilter,
       },
@@ -30,8 +30,8 @@ export function GoodsCategoryCombobox({
       id={id}
       setId={setId}
       label={label}
-      displayComponent={DisplayGoodsCategoryName}
-      useInfiniteQuery={useCategories}
+      displayComponent={DisplayOneGoodsCharacteristicName}
+      useInfiniteQuery={useCharacteristics}
       getOptionLabel={(item) => item.name}
     />
   );
