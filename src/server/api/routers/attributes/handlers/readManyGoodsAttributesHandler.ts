@@ -8,7 +8,7 @@ import {
   readManyAttributesSchema,
 } from "~/utils/validation/attributes/readManyAttributes";
 
-export const readManyAttributesHandler = protectedProcedure
+export const readManyGoodsAttributesHandler = protectedProcedure
   .input(readManyAttributesSchema)
   .query(async ({ input, ctx }) => {
     try {
@@ -19,7 +19,7 @@ export const readManyAttributesHandler = protectedProcedure
     }
   });
 
-export const readManyAttributesInfiniteHandler = protectedProcedure
+export const readManyGoodsAttributesInfiniteHandler = protectedProcedure
   .input(readManyAttributesInfiniteSchema)
   .query(async ({ input, ctx }) => {
     try {

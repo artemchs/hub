@@ -1,3 +1,4 @@
+import { goodsAttributesColumns } from "../admin/attributes/_components/table/columns";
 import { goodsCategoriesColumns } from "../admin/categories/_components/table/columns";
 import { goodsCharacteristicsColumns } from "../admin/characteristics/_components/table/columns";
 import { goodsIdsColumns } from "../admin/ids/_components/table/columns";
@@ -13,4 +14,9 @@ export const useGoodsIdsTable = createTableStore("goods-ids", goodsIdsColumns);
 export const useGoodsCharacteristicsTable = createTableStore(
   "goods-characteristics",
   goodsCharacteristicsColumns
+);
+
+export const useGoodsAttributesTable = createTableStore(
+  "goods-attributes",
+  goodsAttributesColumns
 );

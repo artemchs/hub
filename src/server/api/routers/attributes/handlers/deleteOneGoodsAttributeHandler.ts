@@ -4,7 +4,7 @@ import { deleteOneAttributeSchema } from "~/utils/validation/attributes/deleteOn
 
 export const deleteOneGoodsAttributeHandler = protectedProcedure
   .input(deleteOneAttributeSchema)
-  .query(async ({ ctx, input }) => {
+  .mutation(async ({ ctx, input }) => {
     try {
       return deleteOneAttribute({ tx: ctx.db, payload: input });
     } catch (error) {
