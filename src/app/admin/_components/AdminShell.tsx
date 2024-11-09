@@ -7,9 +7,9 @@ import { UserMenu } from "./UserMenu";
 import {
   IconBooks,
   IconCategory,
+  IconDiamond,
   IconHome,
   IconIdBadge2,
-  IconPentagon,
   IconPhoto,
   IconRuler2,
 } from "@tabler/icons-react";
@@ -40,7 +40,7 @@ const linkData = [
   },
   {
     label: "Характеристики",
-    leftSection: <IconPentagon className="h-4 w-4" />,
+    leftSection: <IconDiamond className="h-4 w-4" />,
     href: "/admin/characteristics",
   },
   {
@@ -82,6 +82,7 @@ export function AdminShell({
         <AppShell.Section grow component={ScrollArea}>
           {linkData.map(({ label, leftSection, href }) => (
             <NavLink
+              prefetch={true}
               className="rounded"
               active={pathname === href}
               component={Link}
