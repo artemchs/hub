@@ -1,7 +1,10 @@
 import { type PrismaTransaction } from "~/server/db";
 import { type Prisma } from "@prisma/client";
 import { mapColumnFilterToPrismaCondition } from "~/utils/table/mapColumnFilterToPrismaCondition";
-import { ReadManyAttributesInfiniteInput, type ReadManyAttributesInput } from "~/utils/validation/attributes/readManyAttributes";
+import type {
+  ReadManyAttributesInfiniteInput,
+  ReadManyAttributesInput,
+} from "~/utils/validation/attributes/readManyAttributes";
 
 export const readManyAttributes = async ({
   tx,

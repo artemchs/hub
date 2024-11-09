@@ -1,6 +1,10 @@
 import { type PrismaTransaction } from "~/server/db";
-import { type ReadManyMediaInput } from "~/utils/validation/media/readManyMedia";
-import { Prisma } from "@prisma/client";
+import { type Prisma } from "@prisma/client";
+import { mapColumnFilterToPrismaCondition } from "~/utils/table/mapColumnFilterToPrismaCondition";
+import type {
+  ReadManyMediaInfiniteInput,
+  ReadManyMediaInput,
+} from "~/utils/validation/media/readManyMedia";
 
 export const readManyMedia = async ({
   tx,
@@ -9,29 +13,77 @@ export const readManyMedia = async ({
   tx: PrismaTransaction;
   payload: ReadManyMediaInput;
 }) => {
-  const { search, filters, cursor, limit, orderBy } = payload;
+  // Convert filters to Prisma conditions
+  const filterConditions =
+    payload.columnFilters?.map(({ id, value }) =>
+      mapColumnFilterToPrismaCondition({
+        id,
+        value,
+        columnFilterFn: payload.columnFilterFns[id] ?? "equals",
+      })
+    ) || [];
 
-  const query: Prisma.GoodsMediaFindManyArgs = {
-    where: {},
-    take: limit,
-    cursor: cursor ? { id: cursor } : undefined,
-    skip: cursor ? 1 : 0,
-    orderBy: orderBy ? { [orderBy.field]: orderBy.direction } : undefined,
-  };
-
-  if (query.where) {
-    if (search) {
-      query.where.key = {
-        contains: search,
-        mode: "insensitive",
-      };
-    }
-
-    // TODO: Add filters here...
+  // Add global filter if present
+  if (payload.globalFilter) {
+    filterConditions.push({
+      key: { contains: payload.globalFilter, mode: "insensitive" },
+    });
   }
 
-  return await Promise.all([
-    tx.goodsMedia.findMany(query),
-    tx.goodsMedia.count({ where: query.where }),
+  const where: Prisma.GoodsMediaWhereInput = {
+    AND: filterConditions.length > 0 ? filterConditions : undefined,
+  };
+
+  // Build orderBy from sorting
+  const orderBy = payload.sorting.map((sort) => ({
+    [sort.id]: sort.desc ? "desc" : "asc",
+  }));
+
+  const [items, total] = await Promise.all([
+    tx.goodsMedia.findMany({
+      skip: payload.pagination.pageIndex * payload.pagination.pageSize,
+      take: payload.pagination.pageSize,
+      where,
+      orderBy,
+    }),
+    tx.goodsMedia.count({ where }),
   ]);
+
+  return {
+    items,
+    total,
+    pageCount: Math.ceil(total / payload.pagination.pageSize),
+  };
+};
+
+export const readManyMediaInfinite = async ({
+  tx,
+  payload,
+}: {
+  tx: PrismaTransaction;
+  payload: ReadManyMediaInfiniteInput;
+}) => {
+  const items = await tx.goodsMedia.findMany({
+    take: payload.limit + 1,
+    where: {
+      key: {
+        contains: payload.globalFilter,
+        mode: "insensitive",
+      },
+    },
+    cursor: payload.cursor ? { id: payload.cursor } : undefined,
+    orderBy: {
+      createdAt: "desc",
+    },
+  });
+
+  let nextCursor: typeof payload.cursor | undefined = undefined;
+  if (items.length > payload.limit) {
+    const nextItem = items.pop();
+    nextCursor = nextItem!.id;
+  }
+  return {
+    items,
+    nextCursor,
+  };
 };
