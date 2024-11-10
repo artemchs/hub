@@ -107,7 +107,8 @@ model GoodsMedia {
     createdAt DateTime @default(now())
     updatedAt DateTime @updatedAt
 
-    key         String
+    key         String             @unique
+    name        String
     mediaToGood GoodsMediaToGood[]
 }
 

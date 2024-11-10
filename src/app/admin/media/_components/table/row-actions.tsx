@@ -4,9 +4,9 @@ import { ActionIcon, Group } from "@mantine/core";
 import { useDisclosure } from "@mantine/hooks";
 import { IconEdit, IconTrash } from "@tabler/icons-react";
 import Link from "next/link";
-import { DeleteOneGoodsAttributeModal } from "~/components/admin/goods-attributes/DeleteOneGoodsAttributeModal";
+import { DeleteOneGoodsMediaModal } from "~/components/admin/goods-media/DeleteOneGoodsMediaModal";
 
-export function GoodsAttributesTableRowActions({ id }: { id: string }) {
+export function GoodsMediaTableRowActions({ id }: { id: string }) {
   const [opened, { open, close }] = useDisclosure(false);
 
   return (
@@ -14,7 +14,7 @@ export function GoodsAttributesTableRowActions({ id }: { id: string }) {
       <Group>
         <ActionIcon
           component={Link}
-          href={`/admin/attributes/${id}`}
+          href={`/admin/media/${id}`}
           variant="transparent"
           color="orange"
         >
@@ -24,7 +24,7 @@ export function GoodsAttributesTableRowActions({ id }: { id: string }) {
           <IconTrash />
         </ActionIcon>
       </Group>
-      <DeleteOneGoodsAttributeModal close={close} id={id} opened={opened} />
+      <DeleteOneGoodsMediaModal close={close} id={id} opened={opened} />
     </>
   );
 }

@@ -2,6 +2,7 @@ import { goodsAttributesColumns } from "../admin/attributes/_components/table/co
 import { goodsCategoriesColumns } from "../admin/categories/_components/table/columns";
 import { goodsCharacteristicsColumns } from "../admin/characteristics/_components/table/columns";
 import { goodsIdsColumns } from "../admin/ids/_components/table/columns";
+import { goodsMediaColumns } from "../admin/media/_components/table/columns";
 import { createTableStore } from "./create-table-store";
 
 export const useGoodsCategoriesTable = createTableStore(
@@ -19,4 +20,9 @@ export const useGoodsCharacteristicsTable = createTableStore(
 export const useGoodsAttributesTable = createTableStore(
   "goods-attributes",
   goodsAttributesColumns
+);
+
+export const useGoodsMediaTable = createTableStore(
+  "goods-media",
+  goodsMediaColumns
 );

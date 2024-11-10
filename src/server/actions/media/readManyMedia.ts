@@ -26,7 +26,7 @@ export const readManyMedia = async ({
   // Add global filter if present
   if (payload.globalFilter) {
     filterConditions.push({
-      key: { contains: payload.globalFilter, mode: "insensitive" },
+      name: { contains: payload.globalFilter, mode: "insensitive" },
     });
   }
 
@@ -66,7 +66,7 @@ export const readManyMediaInfinite = async ({
   const items = await tx.goodsMedia.findMany({
     take: payload.limit + 1,
     where: {
-      key: {
+      name: {
         contains: payload.globalFilter,
         mode: "insensitive",
       },

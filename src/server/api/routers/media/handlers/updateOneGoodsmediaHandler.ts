@@ -6,7 +6,11 @@ export const updateOneGoodsMediaHandler = protectedProcedure
   .input(updateOneMediaSchema)
   .mutation(async ({ input, ctx }) => {
     try {
-      return updateOneMedia({ tx: ctx.db, payload: input });
+      return updateOneMedia({
+        tx: ctx.db,
+        storage: ctx.storage,
+        payload: input,
+      });
     } catch (error) {
       console.error(error);
       throw new Error("Failed to update goods media");

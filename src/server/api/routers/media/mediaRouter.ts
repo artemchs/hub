@@ -1,6 +1,7 @@
 import { createTRPCRouter } from "../../trpc";
 import { createOneGoodsMediaHandler } from "./handlers/createOneGoodsMediaHandler";
 import { deleteOneGoodsMediaHandler } from "./handlers/deleteOneGoodsMediaHandler";
+import { generateOneUploadUrlHandler } from "./handlers/generateOneUploadUrlHandler";
 import {
   readManyGoodsMediaHandler,
   readManyGoodsMediaInfiniteHandler,
@@ -9,6 +10,7 @@ import { readOneGoodsMediaHandler } from "./handlers/readOneGoodsMediaHandler";
 import { updateOneGoodsMediaHandler } from "./handlers/updateOneGoodsmediaHandler";
 
 export const mediaRouter = createTRPCRouter({
+  generateOneUploadUrl: generateOneUploadUrlHandler,
   createOne: createOneGoodsMediaHandler,
   readOne: readOneGoodsMediaHandler,
   readMany: readManyGoodsMediaHandler,

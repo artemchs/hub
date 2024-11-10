@@ -9,6 +9,16 @@ const config = {
     experimental: {
         optimizePackageImports: ["@mantine/core", "@mantine/hooks"],
     },
+    images: {
+        remotePatterns: [
+            {
+                protocol: 'https',
+                hostname: process.env.NEXT_PUBLIC_CLOUDFRONT_HOSTNAME ?? "",
+                port: '',
+                pathname: '/Media/**',
+            },
+        ],
+    },
 };
 
 export default config;

@@ -1,6 +1,8 @@
 import { type PrismaTransaction } from "~/server/db";
 import { type DeleteOneMediaInput } from "~/utils/validation/media/deleteOneMedia";
 import { readOneMedia } from "./readOneMedia";
+import { deleteObject } from "~/server/utils/storage/delete-object";
+import { storage } from "~/server/storage";
 
 export const deleteOneMedia = async ({
   tx,
@@ -9,7 +11,11 @@ export const deleteOneMedia = async ({
   tx: PrismaTransaction;
   payload: DeleteOneMediaInput;
 }) => {
-  await readOneMedia({ tx, payload: { id: payload.id } });
+  const data = await readOneMedia({ tx, payload: { id: payload.id } });
+
+  await deleteObject(storage, {
+    Key: data.key,
+  });
 
   return tx.goodsMedia.delete({
     where: {

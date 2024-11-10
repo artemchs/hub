@@ -11,6 +11,7 @@ export const createOneMedia = async ({
   return tx.goodsMedia.create({
     data: {
       key: payload.key,
+      name: payload.name,
     },
   });
 };
