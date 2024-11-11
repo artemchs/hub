@@ -1,23 +1,16 @@
 import { z } from "zod";
+import { readManyInfiniteSchema, readManySchema } from "../readMany";
 
 export const readManyGoodsSchema = z.object({
-  search: z.string().optional(),
-  filters: z
-    .object({
-      categoryIds: z.array(z.string()).optional(),
-      attributeValueIds: z.array(z.string()).optional(),
-      idValueIds: z.array(z.string()).optional(),
-      mediaIds: z.array(z.string()).optional(),
-    })
-    .optional(),
-  cursor: z.string().optional(),
-  limit: z.number().min(1).max(100).optional(),
-  orderBy: z
-    .object({
-      field: z.string(),
-      direction: z.enum(["asc", "desc"]),
-    })
-    .optional(),
+  ...readManySchema.shape,
 });
 
 export type ReadManyGoodsInput = z.infer<typeof readManyGoodsSchema>;
+
+export const readManyGoodsInfiniteSchema = z.object({
+  ...readManyInfiniteSchema.shape,
+});
+
+export type ReadManyGoodsInfiniteInput = z.infer<
+  typeof readManyGoodsInfiniteSchema
+>;
