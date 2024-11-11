@@ -40,7 +40,18 @@ export function DataCombobox<T extends { id: string }>({
 
   const combobox = useCombobox({
     onDropdownClose: () => combobox.resetSelectedOption(),
-    onDropdownOpen: () => setDropdownOpened(true),
+    onDropdownOpen: () => {
+      setDropdownOpened(true);
+      // Add small delay to ensure the search input is mounted
+      setTimeout(() => {
+        const searchInput = document.querySelector(
+          '[data-combobox-search="true"]'
+        );
+        if (searchInput instanceof HTMLInputElement) {
+          searchInput.focus();
+        }
+      }, 0);
+    },
   });
 
   const { data, isLoading, isError, fetchNextPage, isFetchingNextPage } =
@@ -126,9 +137,11 @@ export function DataCombobox<T extends { id: string }>({
 
       <Combobox.Dropdown>
         <Combobox.Search
+          data-combobox-search
           defaultValue={globalFilter}
           onChange={(event) => setGlobalFilter(event.currentTarget.value)}
           placeholder="Поиск..."
+          autoFocus
           error={isError}
         />
         <Combobox.Options>
