@@ -1,20 +1,10 @@
 import { z } from "zod";
+import { readManyInfiniteSchema } from "../../readMany";
 
-export const readManyIdValuesSchema = z.object({
-  search: z.string().optional(),
-  filters: z
-    .object({
-      parentId: z.string().optional(),
-    })
-    .optional(),
-  cursor: z.string().optional(),
-  limit: z.number().min(1).max(100).optional(),
-  orderBy: z
-    .object({
-      field: z.string(),
-      direction: z.enum(["asc", "desc"]),
-    })
-    .optional(),
+export const readManyIdValuesInfiniteSchema = z.object({
+  ...readManyInfiniteSchema.shape,
 });
 
-export type ReadManyIdValuesInput = z.infer<typeof readManyIdValuesSchema>;
+export type ReadManyIdValuesInfiniteInput = z.infer<
+  typeof readManyIdValuesInfiniteSchema
+>;

@@ -1,39 +1,34 @@
 import { type PrismaTransaction } from "~/server/db";
-import { type ReadManyIdValuesInput } from "~/utils/validation/ids/values/readManyIdValues";
-import { type Prisma } from "@prisma/client";
+import { type ReadManyIdValuesInfiniteInput } from "~/utils/validation/ids/values/readManyIdValues";
 
-export const readManyIdValues = async ({
+export const readManyIdValuesInfinite = async ({
   tx,
   payload,
 }: {
   tx: PrismaTransaction;
-  payload: ReadManyIdValuesInput;
+  payload: ReadManyIdValuesInfiniteInput;
 }) => {
-  const { search, filters, cursor, limit, orderBy } = payload;
-
-  const query: Prisma.GoodsIdValueFindManyArgs = {
-    where: {},
-    take: limit,
-    cursor: cursor ? { id: cursor } : undefined,
-    skip: cursor ? 1 : 0,
-    orderBy: orderBy ? { [orderBy.field]: orderBy.direction } : undefined,
-  };
-
-  if (query.where) {
-    if (search) {
-      query.where.value = {
-        contains: search,
+  const items = await tx.goodsIdValue.findMany({
+    take: payload.limit + 1,
+    where: {
+      value: {
+        contains: payload.globalFilter,
         mode: "insensitive",
-      };
-    }
+      },
+    },
+    cursor: payload.cursor ? { id: payload.cursor } : undefined,
+    orderBy: {
+      createdAt: "desc",
+    },
+  });
 
-    if (filters?.parentId) {
-      query.where.goodsIdId = filters.parentId;
-    }
+  let nextCursor: typeof payload.cursor | undefined = undefined;
+  if (items.length > payload.limit) {
+    const nextItem = items.pop();
+    nextCursor = nextItem!.id;
   }
-
-  return await Promise.all([
-    tx.goodsIdValue.findMany(query),
-    tx.goodsIdValue.count({ where: query.where }),
-  ]);
+  return {
+    items,
+    nextCursor,
+  };
 };
