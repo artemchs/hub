@@ -36,12 +36,10 @@ export function DataCombobox<T extends { id: string }>({
   getOptionLabel,
 }: DataComboboxProps<T>) {
   const [globalFilter, setGlobalFilter] = useDebouncedState("", 300);
-  const [dropdownOpened, setDropdownOpened] = useState(false);
 
   const combobox = useCombobox({
     onDropdownClose: () => combobox.resetSelectedOption(),
     onDropdownOpen: () => {
-      setDropdownOpened(true);
       // Add small delay to ensure the search input is mounted
       setTimeout(() => {
         const searchInput = document.querySelector(
