@@ -7,6 +7,7 @@ import {
 } from "./handlers/readManyCharacteristicsHandler";
 import { readOneCharacteristicHandler } from "./handlers/readOneCharacteristicHandler";
 import { updateOneCharacteristicHandler } from "./handlers/updateOneCharacteristicHandler";
+import { characteristicValuesRouter } from "./values/characteristicValuesRouter";
 
 export const characteristicsRouter = createTRPCRouter({
   createOne: createOneCharacteristicHandler,
@@ -15,4 +16,5 @@ export const characteristicsRouter = createTRPCRouter({
   readManyInfinite: readManyCharacteristicsInfiniteHandler,
   updateOne: updateOneCharacteristicHandler,
   deleteOne: deleteOneCharacteristicHandler,
+  values: characteristicValuesRouter,
 });
