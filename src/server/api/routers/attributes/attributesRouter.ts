@@ -7,6 +7,7 @@ import {
 } from "./handlers/readManyGoodsAttributesHandler";
 import { readOneGoodsAttributeHandler } from "./handlers/readOneGoodsAttributeHandler";
 import { updateOneGoodsAttributeHandler } from "./handlers/updateOneGoodsAttributeHandler";
+import { attributeValuesRouter } from "./values/attributeValuesRouter";
 
 export const attributesRouter = createTRPCRouter({
   createOne: createOneGoodsAttributeHandler,
@@ -15,4 +16,5 @@ export const attributesRouter = createTRPCRouter({
   readManyInfinite: readManyGoodsAttributesInfiniteHandler,
   updateOne: updateOneGoodsAttributeHandler,
   deleteOne: deleteOneGoodsAttributeHandler,
+  values: attributeValuesRouter,
 });

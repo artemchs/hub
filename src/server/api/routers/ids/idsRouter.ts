@@ -4,6 +4,7 @@ import { deleteOneGoodsIdHandler } from "./handlers/deleteOneGoodsIdHandler";
 import { readManyGoodsIdsHandler } from "./handlers/readmanyGoodsIdsHandler";
 import { readOneGoodsIdHandler } from "./handlers/readOneGoodsIdHandler";
 import { updateOneGoodsIdHandler } from "./handlers/updateOneGoodsIdHandler";
+import { idValuesRouter } from "./values/idValuesRouter";
 
 export const idsRouter = createTRPCRouter({
   createOne: createOneGoodsIdHandler,
@@ -11,4 +12,5 @@ export const idsRouter = createTRPCRouter({
   readMany: readManyGoodsIdsHandler,
   updateOne: updateOneGoodsIdHandler,
   deleteOne: deleteOneGoodsIdHandler,
+  values: idValuesRouter,
 });
