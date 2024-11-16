@@ -37,6 +37,7 @@ export function UpdateOneGood({ id }: { id: string }) {
       mode="update"
       initialValues={{
         id,
+        name: data?.name ?? "",
         description: data?.description ?? "",
         sku: data?.sku ?? "",
         fullPrice: data?.fullPrice ? new Decimal(data.fullPrice).toNumber() : 0,

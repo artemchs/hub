@@ -5,6 +5,7 @@ import { readOneAttributeValue } from "../attributes/values/readOneAttributeValu
 import { readOneIdValue } from "../ids/values/readOneIdValue";
 import { readOneCharacteristic } from "../characteristics/readOneCharacteristic";
 import { readOneCharacteristicValue } from "../characteristics/values/readOneCharacteristicValue";
+import { readOneAttribute } from "../attributes/readOneAttribute";
 
 export const checkDbRecordsForGood = async ({
   tx,
@@ -20,12 +21,9 @@ export const checkDbRecordsForGood = async ({
   }
 
   if (payload.attributes) {
-    for (const { id, valueIds } of payload.attributes) {
-      await readOneAttributeValue({ tx, payload: { id } });
-
-      for (const valueId of valueIds) {
-        await readOneAttributeValue({ tx, payload: { id: valueId } });
-      }
+    for (const { id, valueId } of payload.attributes) {
+      await readOneAttribute({ tx, payload: { id } });
+      await readOneAttributeValue({ tx, payload: { id: valueId } });
     }
   }
 
@@ -42,22 +40,6 @@ export const checkDbRecordsForGood = async ({
   if (payload.idValueIds) {
     for (const idValueId of payload.idValueIds) {
       await readOneIdValue({ tx, payload: { id: idValueId } });
-    }
-  }
-
-  if (payload.mediaKeys) {
-    for (const key of payload.mediaKeys) {
-      const media = await tx.goodsMedia.findFirst({
-        where: {
-          key,
-        },
-      });
-
-      if (!media) {
-        throw new Error(`Media with key ${key} not found`);
-      }
-
-      mediaIds.push(media.id);
     }
   }
 

@@ -25,11 +25,10 @@ import { GoodsCategoryCombobox } from "../goods-categories/GoodsCategoryCombobox
 import { DragDropContext, Droppable, Draggable } from "@hello-pangea/dnd";
 import { IconGripVertical, IconPlus, IconTrash } from "@tabler/icons-react";
 import { GoodsAttributesCombobox } from "../goods-attributes/GoodsAttributeCombobox";
-import { GoodsAttributeValuesMultiselect } from "../goods-attributes/values/GoodsAttributeValuesMultiselect";
 import { GoodsAttributeValueCombobox } from "../goods-attributes/values/GoodsAttributeValueCombobox";
 import { GoodsCharacteristicCombobox } from "../goods-characteristics/GoodsCharacteristicCombobox";
 import { GoodsCharacteristicValuesMultiselect } from "../goods-characteristics/values/GoodsCharacteristicValuesMultiselect";
-import { useMultipleUpload, useSingleUpload } from "~/hooks/useUpload";
+import { useMultipleUpload } from "~/hooks/useUpload";
 import { env } from "~/env";
 import { ImageDropzone } from "~/components/ImageDropzone";
 
@@ -51,6 +50,7 @@ export function SingleGoodForm({
   const form = useForm({
     mode: "controlled",
     initialValues: initialValues ?? {
+      name: "",
       sku: "",
       description: "",
       categoryId: undefined,
@@ -179,6 +179,12 @@ export function SingleGoodForm({
             <Text size="lg" fw="bold">
               Основное
             </Text>
+            <TextInput
+              withAsterisk
+              label="Название"
+              key={form.key("name")}
+              {...form.getInputProps("name")}
+            />
             <TextInput
               withAsterisk
               label="Артикул"
@@ -364,7 +370,7 @@ export function SingleGoodForm({
                 variant="subtle"
                 onClick={() =>
                   form.setFieldValue(
-                    `characteristics.${form.values.attributes?.length ?? 0}`,
+                    `characteristics.${form.values.characteristics?.length ?? 0}`,
                     {
                       id: null,
                       valueIds: [],

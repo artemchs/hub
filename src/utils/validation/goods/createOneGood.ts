@@ -1,6 +1,7 @@
 import { z } from "zod";
 
 export const createOneGoodSchema = z.object({
+  name: z.string().min(1),
   sku: z.string().min(1),
   description: z.string().optional(),
   fullPrice: z.number().optional(),

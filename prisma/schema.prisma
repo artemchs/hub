@@ -76,6 +76,7 @@ model Good {
     createdAt DateTime @default(now())
     updatedAt DateTime @updatedAt
 
+    name                 String
     sku                  String
     description          String                      @default("") @db.Text
     fullPrice            Decimal                     @default(0) @db.Decimal(10, 2)

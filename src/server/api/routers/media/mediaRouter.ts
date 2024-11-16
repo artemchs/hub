@@ -9,11 +9,13 @@ import {
 import { readOneGoodsMediaHandler } from "./handlers/readOneGoodsMediaHandler";
 import { updateOneGoodsMediaHandler } from "./handlers/updateOneGoodsmediaHandler";
 import { generateManyUploadUrlsHandler } from "./handlers/generateManyUploadUrlsHandler";
+import { createManyGoodsMediaHandler } from "./handlers/createManyGoodsMediaHandler";
 
 export const mediaRouter = createTRPCRouter({
   generateOneUploadUrl: generateOneUploadUrlHandler,
   generateManyUploadUrls: generateManyUploadUrlsHandler,
   createOne: createOneGoodsMediaHandler,
+  createMany: createManyGoodsMediaHandler,
   readOne: readOneGoodsMediaHandler,
   readMany: readManyGoodsMediaHandler,
   readManyInfinite: readManyGoodsMediaInfiniteHandler,

@@ -9,10 +9,11 @@ export const createOneGood = async ({
   tx: PrismaTransaction;
   payload: CreateOneGoodInput;
 }) => {
-  const { mediaIds } = await checkDbRecordsForGood({ tx, payload });
+  await checkDbRecordsForGood({ tx, payload });
 
   return tx.good.create({
     data: {
+      name: payload.name,
       sku: payload.sku,
       description: payload.description,
       fullPrice: payload.fullPrice,
@@ -22,14 +23,24 @@ export const createOneGood = async ({
       idValues: {
         connect: payload.idValueIds?.map((id) => ({ id })),
       },
-      mediaToGood: {
-        createMany: {
-          data: mediaIds.map((id, index) => ({
-            mediaId: id,
-            index,
-          })),
-        },
-      },
+      mediaToGood: payload.mediaKeys
+        ? {
+            create: payload.mediaKeys?.map((key, index) => ({
+              index,
+              media: {
+                connectOrCreate: {
+                  where: {
+                    key,
+                  },
+                  create: {
+                    key,
+                    name: key,
+                  },
+                },
+              },
+            })),
+          }
+        : undefined,
       attributeToGood: payload.attributes
         ? {
             createMany: {
@@ -43,15 +54,13 @@ export const createOneGood = async ({
         : undefined,
       characteristicToGood: payload.characteristics
         ? {
-            createMany: {
-              data: payload.characteristics.map(({ id, valueIds }, index) => ({
-                characteristicId: id,
-                characteristicValues: {
-                  connect: valueIds.map((id) => ({ id })),
-                },
-                index,
-              })),
-            },
+            create: payload.characteristics.map(({ id, valueIds }, index) => ({
+              characteristicId: id,
+              values: {
+                connect: valueIds.map((id) => ({ id })),
+              },
+              index,
+            })),
           }
         : undefined,
     },

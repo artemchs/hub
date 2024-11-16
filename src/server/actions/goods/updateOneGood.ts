@@ -11,7 +11,7 @@ export const updateOneGood = async ({
   payload: UpdateOneGoodInput;
 }) => {
   await readOneGood({ tx, payload: { id: payload.id } });
-  const { mediaIds } = await checkDbRecordsForGood({ tx, payload });
+  await checkDbRecordsForGood({ tx, payload });
 
   return tx.good.update({
     where: {
@@ -31,12 +31,20 @@ export const updateOneGood = async ({
         deleteMany: {
           goodId: payload.id,
         },
-        createMany: {
-          data: mediaIds.map((id, index) => ({
-            mediaId: id,
-            index,
-          })),
-        },
+        create: payload.mediaKeys?.map((key, index) => ({
+          index,
+          media: {
+            connectOrCreate: {
+              where: {
+                key,
+              },
+              create: {
+                key,
+                name: key,
+              },
+            },
+          },
+        })),
       },
       attributeToGood: {
         deleteMany: {
@@ -56,16 +64,14 @@ export const updateOneGood = async ({
         deleteMany: {
           goodId: payload.id,
         },
-        createMany: payload.characteristics
-          ? {
-              data: payload.characteristics.map(({ id, valueIds }, index) => ({
-                characteristicId: id,
-                characteristicValues: {
-                  connect: valueIds.map((id) => ({ id })),
-                },
-                index,
-              })),
-            }
+        create: payload.characteristics
+          ? payload.characteristics.map(({ id, valueIds }, index) => ({
+              characteristicId: id,
+              values: {
+                connect: valueIds.map((id) => ({ id })),
+              },
+              index,
+            }))
           : undefined,
       },
     },
