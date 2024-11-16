@@ -10,3 +10,4 @@
 @import "@mantine/dates/styles.css" layer(mantine);
 @import "mantine-react-table/styles.css" layer(mantine);
 @import "@mantine/dropzone/styles.css" layer(mantine);
+@import "@mantine/tiptap/styles.css" layer(mantine);

@@ -9,7 +9,7 @@ export function DisplayOneGoodsAttributeName({
   id: string | null | undefined;
 }) {
   const { data, isLoading, isError } = api.attributes.readOne.useQuery(
-    { id: id ?? "" },
+    { id: id! },
     {
       enabled: !!id,
     }

@@ -13,16 +13,12 @@ export const createOneGood = async ({
 
   return tx.good.create({
     data: {
-      name: payload.name,
       sku: payload.sku,
       description: payload.description,
       fullPrice: payload.fullPrice,
       price: payload.price,
       quantity: payload.quantity,
       categoryId: payload.categoryId,
-      attributeValues: {
-        connect: payload.attributeValueIds?.map((id) => ({ id })),
-      },
       idValues: {
         connect: payload.idValueIds?.map((id) => ({ id })),
       },
@@ -34,6 +30,30 @@ export const createOneGood = async ({
           })),
         },
       },
+      attributeToGood: payload.attributes
+        ? {
+            createMany: {
+              data: payload.attributes.map(({ id, valueId }, index) => ({
+                attributeId: id,
+                valueId,
+                index,
+              })),
+            },
+          }
+        : undefined,
+      characteristicToGood: payload.characteristics
+        ? {
+            createMany: {
+              data: payload.characteristics.map(({ id, valueIds }, index) => ({
+                characteristicId: id,
+                characteristicValues: {
+                  connect: valueIds.map((id) => ({ id })),
+                },
+                index,
+              })),
+            },
+          }
+        : undefined,
     },
   });
 };

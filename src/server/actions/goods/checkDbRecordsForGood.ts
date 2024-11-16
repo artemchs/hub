@@ -3,6 +3,8 @@ import { type CreateOneGoodInput } from "~/utils/validation/goods/createOneGood"
 import { readOneCategory } from "../categories/readOneCategory";
 import { readOneAttributeValue } from "../attributes/values/readOneAttributeValue";
 import { readOneIdValue } from "../ids/values/readOneIdValue";
+import { readOneCharacteristic } from "../characteristics/readOneCharacteristic";
+import { readOneCharacteristicValue } from "../characteristics/values/readOneCharacteristicValue";
 
 export const checkDbRecordsForGood = async ({
   tx,
@@ -17,9 +19,23 @@ export const checkDbRecordsForGood = async ({
     await readOneCategory({ tx, payload: { id: payload.categoryId } });
   }
 
-  if (payload.attributeValueIds) {
-    for (const attributeValueId of payload.attributeValueIds) {
-      await readOneAttributeValue({ tx, payload: { id: attributeValueId } });
+  if (payload.attributes) {
+    for (const { id, valueIds } of payload.attributes) {
+      await readOneAttributeValue({ tx, payload: { id } });
+
+      for (const valueId of valueIds) {
+        await readOneAttributeValue({ tx, payload: { id: valueId } });
+      }
+    }
+  }
+
+  if (payload.characteristics) {
+    for (const { id, valueIds } of payload.characteristics) {
+      await readOneCharacteristic({ tx, payload: { id } });
+
+      for (const valueId of valueIds) {
+        await readOneCharacteristicValue({ tx, payload: { id: valueId } });
+      }
     }
   }
 

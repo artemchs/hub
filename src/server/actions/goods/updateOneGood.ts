@@ -18,16 +18,12 @@ export const updateOneGood = async ({
       id: payload.id,
     },
     data: {
-      name: payload.name,
       sku: payload.sku,
       description: payload.description,
       fullPrice: payload.fullPrice,
       price: payload.price,
       quantity: payload.quantity,
       categoryId: payload.categoryId,
-      attributeValues: {
-        set: payload.attributeValueIds?.map((id) => ({ id })),
-      },
       idValues: {
         set: payload.idValueIds?.map((id) => ({ id })),
       },
@@ -41,6 +37,36 @@ export const updateOneGood = async ({
             index,
           })),
         },
+      },
+      attributeToGood: {
+        deleteMany: {
+          goodId: payload.id,
+        },
+        createMany: payload.attributes
+          ? {
+              data: payload.attributes.map(({ id, valueId }, index) => ({
+                attributeId: id,
+                valueId,
+                index,
+              })),
+            }
+          : undefined,
+      },
+      characteristicToGood: {
+        deleteMany: {
+          goodId: payload.id,
+        },
+        createMany: payload.characteristics
+          ? {
+              data: payload.characteristics.map(({ id, valueIds }, index) => ({
+                characteristicId: id,
+                characteristicValues: {
+                  connect: valueIds.map((id) => ({ id })),
+                },
+                index,
+              })),
+            }
+          : undefined,
       },
     },
   });

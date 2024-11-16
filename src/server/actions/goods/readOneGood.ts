@@ -12,6 +12,35 @@ export const readOneGood = async ({
     where: {
       id: payload.id,
     },
+    include: {
+      idValues: true,
+      mediaToGood: {
+        orderBy: {
+          index: "asc",
+        },
+        include: {
+          media: true,
+        },
+      },
+      attributeToGood: {
+        orderBy: {
+          index: "asc",
+        },
+      },
+      characteristicToGood: {
+        orderBy: {
+          index: "asc",
+        },
+        include: {
+          values: {
+            orderBy: {
+              value: "asc",
+            },
+          },
+          characteristic: true,
+        },
+      },
+    },
   });
 
   if (!good) {

@@ -43,7 +43,13 @@ export function SingleGoodsAttributeForm({
   }, [initialValues]);
 
   return (
-    <form onSubmit={form.onSubmit(onSubmit)} className="flex flex-col gap-4">
+    <form
+      onSubmit={(e) => {
+        e.stopPropagation();
+        form.onSubmit(onSubmit)(e);
+      }}
+      className="flex flex-col gap-4"
+    >
       <TextInput
         withAsterisk
         label="Название"
@@ -51,7 +57,7 @@ export function SingleGoodsAttributeForm({
         {...form.getInputProps("name")}
       />
       <Group justify="flex-end" mt="md">
-        <Button variant="subtle" component={Link} href="/admin/Attributes">
+        <Button variant="subtle" component={Link} href="/admin/attributes">
           Отменить
         </Button>
         <Button type="submit" loading={isPending}>

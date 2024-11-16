@@ -47,7 +47,13 @@ export function SingleGoodsCharacteristicForm({
   }, [initialValues]);
 
   return (
-    <form onSubmit={form.onSubmit(onSubmit)} className="flex flex-col gap-4">
+    <form
+      onSubmit={(e) => {
+        e.stopPropagation();
+        form.onSubmit(onSubmit)(e);
+      }}
+      className="flex flex-col gap-4"
+    >
       <TextInput
         withAsterisk
         label="Название"

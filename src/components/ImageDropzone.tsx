@@ -1,12 +1,27 @@
 "use client";
 
-import { Group, Text, rem, SimpleGrid, Image, Paper } from "@mantine/core";
-import { IconUpload, IconPhoto, IconX } from "@tabler/icons-react";
+import {
+  Group,
+  Text,
+  rem,
+  SimpleGrid,
+  Image,
+  Paper,
+  ActionIcon,
+  Flex,
+} from "@mantine/core";
+import {
+  IconUpload,
+  IconPhoto,
+  IconX,
+  IconGripVertical,
+} from "@tabler/icons-react";
 import {
   Dropzone,
   type DropzoneProps,
   IMAGE_MIME_TYPE,
 } from "@mantine/dropzone";
+import { DragDropContext, Droppable, Draggable } from "@hello-pangea/dnd";
 
 const MAX_MB = 5;
 
@@ -14,6 +29,7 @@ interface ImageDropzoneProps extends Omit<Partial<DropzoneProps>, "onChange"> {
   multiple?: boolean;
   handleSelect: (files: File[]) => void;
   handleRemove: (index: number) => void;
+  handleReorder?: (oldIndex: number, newIndex: number) => void;
   previewUrls: string[];
   loading?: boolean;
   error?: string | null;
@@ -26,32 +42,47 @@ export function ImageDropzone({
   previewUrls,
   loading,
   error,
+  handleReorder,
   ...props
 }: ImageDropzoneProps) {
   const previews = previewUrls
     .filter((value) => value && value !== "")
-    .map((url, index) => {
-      return (
-        <Paper
-          shadow="xs"
-          key={url}
-          className="relative group h-40 w-40 flex items-center justify-center"
-        >
-          <Image
-            alt={`Preview ${index + 1}`}
-            src={url}
-            className="rounded-md object-cover"
-          />
-          <button
-            className="absolute top-2 right-2 p-1 rounded-full bg-red-500 text-white opacity-0 group-hover:opacity-100 transition-opacity"
-            onClick={() => handleRemove(index)}
-            type="button"
+    .map((url, index) => (
+      <Draggable key={url} draggableId={url} index={index}>
+        {(provided, snapshot) => (
+          <Paper
+            shadow={snapshot.isDragging ? "lg" : "xs"}
+            ref={provided.innerRef}
+            {...provided.draggableProps}
+            className="relative group h-40 w-40 flex items-center justify-center"
           >
-            <IconX size={16} />
-          </button>
-        </Paper>
-      );
-    });
+            <Group className="absolute top-2 right-2 z-10 opacity-0 group-hover:opacity-100 transition-opacity">
+              <ActionIcon
+                variant="filled"
+                color="dark"
+                {...provided.dragHandleProps}
+                size="sm"
+              >
+                <IconGripVertical size={16} />
+              </ActionIcon>
+              <ActionIcon
+                variant="filled"
+                color="red"
+                onClick={() => handleRemove(index)}
+                size="sm"
+              >
+                <IconX size={16} />
+              </ActionIcon>
+            </Group>
+            <Image
+              alt={`Preview ${index + 1}`}
+              src={url}
+              className="rounded-md object-cover"
+            />
+          </Paper>
+        )}
+      </Draggable>
+    ));
 
   return (
     <div className="space-y-4">
@@ -119,7 +150,29 @@ export function ImageDropzone({
         </Group>
       </Dropzone>
       {previews.length > 0 && (
-        <SimpleGrid cols={{ base: 1, sm: 4 }}>{previews}</SimpleGrid>
+        <DragDropContext
+          onDragEnd={({ source, destination }) => {
+            if (!destination || !handleReorder) return;
+            handleReorder(source.index, destination.index);
+          }}
+        >
+          <Droppable droppableId="image-previews" direction="horizontal">
+            {(provided) => (
+              <Flex
+                gap="md"
+                wrap="wrap"
+                justify="flex-start"
+                align="flex-start"
+                direction="row"
+                {...provided.droppableProps}
+                ref={provided.innerRef}
+              >
+                {previews}
+                {provided.placeholder}
+              </Flex>
+            )}
+          </Droppable>
+        </DragDropContext>
       )}
     </div>
   );

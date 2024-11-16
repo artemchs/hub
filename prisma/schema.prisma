@@ -76,21 +76,20 @@ model Good {
     createdAt DateTime @default(now())
     updatedAt DateTime @updatedAt
 
-    name                 String
     sku                  String
-    description          String                     @default("") @db.Text
-    fullPrice            Decimal                    @default(0) @db.Decimal(10, 2)
-    price                Decimal                    @default(0) @db.Decimal(10, 2)
-    quantity             Int                        @default(0)
+    description          String                      @default("") @db.Text
+    fullPrice            Decimal                     @default(0) @db.Decimal(10, 2)
+    price                Decimal                     @default(0) @db.Decimal(10, 2)
+    quantity             Decimal                     @default(0) @db.Decimal(10, 3)
     tags                 GoodsTag[]
-    category             GoodsCategory?             @relation(fields: [categoryId], references: [id])
+    category             GoodsCategory?              @relation(fields: [categoryId], references: [id])
     categoryId           String?
-    group                GoodsGroup?                @relation(fields: [groupId], references: [id])
+    group                GoodsGroup?                 @relation(fields: [groupId], references: [id])
     groupId              String?
-    attributeValues      GoodsAttributeValue[]
     idValues             GoodsIdValue[]
-    characteristicValues GoodsCharacteristicValue[]
     mediaToGood          GoodsMediaToGood[]
+    attributeToGood      GoodsAttributeToGood[]
+    characteristicToGood GoodsCharacteristicToGood[]
 }
 
 model GoodsGroup {
@@ -128,8 +127,9 @@ model GoodsAttribute {
     createdAt DateTime @default(now())
     updatedAt DateTime @updatedAt
 
-    name   String
-    values GoodsAttributeValue[]
+    name            String
+    values          GoodsAttributeValue[]
+    attributeToGood GoodsAttributeToGood[]
 }
 
 model GoodsAttributeValue {
@@ -137,10 +137,24 @@ model GoodsAttributeValue {
     createdAt DateTime @default(now())
     updatedAt DateTime @updatedAt
 
-    value       String
-    goods       Good[]
-    attribute   GoodsAttribute? @relation(fields: [attributeId], references: [id])
-    attributeId String?
+    attribute       GoodsAttribute?        @relation(fields: [attributeId], references: [id])
+    attributeId     String?
+    attributeToGood GoodsAttributeToGood[]
+
+    value String
+}
+
+model GoodsAttributeToGood {
+    id String @id @default(cuid())
+
+    attribute   GoodsAttribute @relation(fields: [attributeId], references: [id], onDelete: Cascade)
+    attributeId String
+    good        Good           @relation(fields: [goodId], references: [id], onDelete: Cascade)
+    goodId      String
+
+    value   GoodsAttributeValue @relation(fields: [valueId], references: [id], onDelete: Cascade)
+    valueId String
+    index   Int
 }
 
 model GoodsId {
@@ -168,8 +182,9 @@ model GoodsCharacteristic {
     createdAt DateTime @default(now())
     updatedAt DateTime @updatedAt
 
-    name   String
-    values GoodsCharacteristicValue[]
+    name                 String
+    values               GoodsCharacteristicValue[]
+    characteristicToGood GoodsCharacteristicToGood[]
 }
 
 model GoodsCharacteristicValue {
@@ -177,10 +192,22 @@ model GoodsCharacteristicValue {
     createdAt DateTime @default(now())
     updatedAt DateTime @updatedAt
 
-    value            String
-    goods            Good[]
-    characteristic   GoodsCharacteristic? @relation(fields: [characteristicId], references: [id])
-    characteristicId String?
+    value                String
+    characteristic       GoodsCharacteristic?        @relation(fields: [characteristicId], references: [id])
+    characteristicId     String?
+    characteristicToGood GoodsCharacteristicToGood[]
+}
+
+model GoodsCharacteristicToGood {
+    id String @id @default(cuid())
+
+    characteristic   GoodsCharacteristic @relation(fields: [characteristicId], references: [id], onDelete: Cascade)
+    characteristicId String
+    good             Good                @relation(fields: [goodId], references: [id], onDelete: Cascade)
+    goodId           String
+
+    values GoodsCharacteristicValue[]
+    index  Int
 }
 
 model GoodsTag {

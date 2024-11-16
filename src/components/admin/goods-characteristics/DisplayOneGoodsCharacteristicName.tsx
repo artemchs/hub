@@ -9,7 +9,7 @@ export function DisplayOneGoodsCharacteristicName({
   id: string | null | undefined;
 }) {
   const { data, isLoading, isError } = api.characteristics.readOne.useQuery(
-    { id: id ?? "" },
+    { id: id! },
     {
       enabled: !!id,
     }

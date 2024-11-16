@@ -15,6 +15,9 @@ export const readManyCharacteristicValuesInfinite = async ({
         contains: payload.globalFilter,
         mode: "insensitive",
       },
+      characteristicId: payload.parentId
+        ? { equals: payload.parentId }
+        : undefined,
     },
     cursor: payload.cursor ? { id: payload.cursor } : undefined,
     orderBy: {

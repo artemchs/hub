@@ -9,7 +9,7 @@ export function DisplayGoodsCategoryName({
   id: string | null | undefined;
 }) {
   const { data, isLoading, isError } = api.categories.readOne.useQuery(
-    { id: id ?? "" },
+    { id: id! },
     {
       enabled: !!id,
     }

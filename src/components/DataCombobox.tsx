@@ -25,6 +25,7 @@ interface DataComboboxProps<T> {
     isFetchingNextPage: boolean;
   };
   getOptionLabel: (item: T) => string;
+  disabled?: boolean;
 }
 
 export function DataCombobox<T extends { id: string }>({
@@ -34,6 +35,7 @@ export function DataCombobox<T extends { id: string }>({
   displayComponent: DisplayComponent,
   useInfiniteQuery,
   getOptionLabel,
+  disabled,
 }: DataComboboxProps<T>) {
   const [globalFilter, setGlobalFilter] = useDebouncedState("", 300);
 
@@ -108,6 +110,7 @@ export function DataCombobox<T extends { id: string }>({
           component="button"
           type="button"
           pointer
+          disabled={disabled}
           rightSection={
             isLoading ? (
               <Loader size={18} />
@@ -117,13 +120,18 @@ export function DataCombobox<T extends { id: string }>({
                 onMouseDown={(event) => event.preventDefault()}
                 onClick={() => setId("")}
                 aria-label="Убрать выбранное значение"
+                disabled={disabled}
               />
             ) : (
               <Combobox.Chevron />
             )
           }
-          onClick={() => combobox.toggleDropdown()}
-          rightSectionPointerEvents={id ? undefined : "none"}
+          onClick={() => {
+            if (!disabled) {
+              combobox.toggleDropdown();
+            }
+          }}
+          rightSectionPointerEvents={id && !disabled ? undefined : "none"}
         >
           {id ? (
             <DisplayComponent id={id} />

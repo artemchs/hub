@@ -15,6 +15,7 @@ export const readManyAttributeValuesInfinite = async ({
         contains: payload.globalFilter,
         mode: "insensitive",
       },
+      attributeId: payload.parentId ? { equals: payload.parentId } : undefined,
     },
     cursor: payload.cursor ? { id: payload.cursor } : undefined,
     orderBy: {

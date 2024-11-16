@@ -9,7 +9,7 @@ export function DisplayOneGoodsMediaKey({
   id: string | null | undefined;
 }) {
   const { data, isLoading, isError } = api.media.readOne.useQuery(
-    { id: id ?? "" },
+    { id: id! },
     {
       enabled: !!id,
     }
