@@ -10,9 +10,17 @@ export const createOneGoodsImportSchemaSchema = z.object({
     price: z.string().optional(),
     fixedDiscount: z.string().optional(),
     percentageDiscount: z.string().optional(),
-    quantity: z.number().optional(),
+    quantity: z.string().optional(),
     mediaKeys: z.string().optional(),
     attributes: z
+      .array(
+        z.object({
+          id: z.string().min(1),
+          field: z.string().min(1),
+        })
+      )
+      .optional(),
+    characteristics: z
       .array(
         z.object({
           id: z.string().min(1),

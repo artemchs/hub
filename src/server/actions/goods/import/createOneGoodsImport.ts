@@ -2,11 +2,11 @@ import { type PrismaTransaction } from "~/server/db";
 import { type CreateOneGoodsImportInput } from "~/utils/validation/goods/import/createOneGoodsImport";
 import { readOneGoodsImportSchema } from "./schemas/readOneGoodsImportSchema";
 import { transformExcelToJson } from "./utils/transformExcelToJson";
-import { validateAndParseGoodsImportSchema } from "./utils/validateAndParseGoodsImportSchema";
 import { mapJsonToGoods } from "./utils/mapJsonToGoods";
 import { uploadMappedGoodsToDb } from "./utils/uploadMappedGoodsToDb";
 import { type Storage } from "~/server/storage";
 import { downloadObject } from "~/server/utils/storage/download-object";
+import { parseGoodsImportSchema } from "~/utils/validation/goods/import/schemas/parseGoodsImportSchema";
 
 export type GoodsImportJsonItem = Record<string, unknown>;
 
@@ -27,7 +27,7 @@ export const createOneGoodsImport = async ({
       payload: { id: payload.schemaId },
     });
 
-    const schemaData = validateAndParseGoodsImportSchema(goodsImportSchema);
+    const schemaData = parseGoodsImportSchema(goodsImportSchema);
 
     const goodsImportFile = await downloadObject(storage, {
       Key: payload.fileKey,

@@ -1,5 +1,5 @@
 import { z } from "zod";
-import { readManySchema } from "../readMany";
+import { readManyInfiniteSchema, readManySchema } from "../readMany";
 
 // Final schema
 export const readManyIdsSchema = z.object({
@@ -7,3 +7,11 @@ export const readManyIdsSchema = z.object({
 });
 
 export type ReadManyIdsInput = z.infer<typeof readManyIdsSchema>;
+
+export const readManyIdsInfiniteSchema = z.object({
+  ...readManyInfiniteSchema.shape,
+});
+
+export type ReadManyIdsInfiniteInput = z.infer<
+  typeof readManyIdsInfiniteSchema
+>;

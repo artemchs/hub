@@ -8,6 +8,7 @@ import {
   IconBooks,
   IconCategory,
   IconDiamond,
+  IconFileImport,
   IconHome,
   IconIdBadge2,
   IconPhoto,
@@ -27,6 +28,11 @@ const linkData = [
     label: "Товары",
     leftSection: <IconBooks className="h-4 w-4" />,
     href: "/admin/goods",
+  },
+  {
+    label: "Схемы импорта",
+    leftSection: <IconFileImport className="h-4 w-4" />,
+    href: "/admin/goods/import/schemas",
   },
   {
     label: "Категории",

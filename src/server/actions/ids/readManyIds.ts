@@ -1,7 +1,7 @@
 import { type Prisma } from "@prisma/client";
 import { type PrismaTransaction } from "~/server/db";
 import { mapColumnFilterToPrismaCondition } from "~/utils/table/mapColumnFilterToPrismaCondition";
-import { type ReadManyIdsInput } from "~/utils/validation/ids/readManyIds";
+import { ReadManyIdsInfiniteInput, type ReadManyIdsInput } from "~/utils/validation/ids/readManyIds";
 
 export const readManyIds = async ({
   tx,
@@ -52,3 +52,36 @@ export const readManyIds = async ({
     pageCount: Math.ceil(total / payload.pagination.pageSize),
   };
 };
+
+export const readManyIdsInfinite = async ({
+  tx,
+  payload,
+}: {
+  tx: PrismaTransaction;
+  payload: ReadManyIdsInfiniteInput;
+}) => {
+  const items = await tx.goodsId.findMany({
+    take: payload.limit + 1,
+    where: {
+      name: {
+        contains: payload.globalFilter,
+        mode: "insensitive",
+      },
+    },
+    cursor: payload.cursor ? { id: payload.cursor } : undefined,
+    orderBy: {
+      createdAt: "desc",
+    },
+  });
+
+  let nextCursor: typeof payload.cursor | undefined = undefined;
+  if (items.length > payload.limit) {
+    const nextItem = items.pop();
+    nextCursor = nextItem!.id;
+  }
+  return {
+    items,
+    nextCursor,
+  };
+};
+
