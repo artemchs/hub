@@ -1,7 +1,7 @@
 "use client";
 
 import { ActionIcon, Group } from "@mantine/core";
-import { IconEdit, IconTrash } from "@tabler/icons-react";
+import { IconPencil, IconTrash } from "@tabler/icons-react";
 import Link from "next/link";
 import { useDisclosure } from "@mantine/hooks";
 import { DeleteGoodsIdModal } from "~/components/admin/goods-ids/DeleteGoodsIdModal";
@@ -11,17 +11,18 @@ export function GoodsIdsTableRowActions({ id }: { id: string }) {
 
   return (
     <>
-      <Group>
+      <Group gap="xs">
         <ActionIcon
           component={Link}
           href={`/admin/ids/${id}`}
           variant="transparent"
-          color="orange"
+          color="dark"
+          size="xs"
         >
-          <IconEdit />
+          <IconPencil size={16} />
         </ActionIcon>
-        <ActionIcon color="red" variant="transparent" onClick={open}>
-          <IconTrash />
+        <ActionIcon size="xs" color="dark" variant="transparent" onClick={open}>
+          <IconTrash size={16} />
         </ActionIcon>
       </Group>
       <DeleteGoodsIdModal close={close} id={id} opened={opened} />

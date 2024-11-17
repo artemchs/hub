@@ -2,7 +2,7 @@
 
 import { ActionIcon, Group } from "@mantine/core";
 import { useDisclosure } from "@mantine/hooks";
-import { IconEdit, IconTrash } from "@tabler/icons-react";
+import { IconPencil, IconTrash } from "@tabler/icons-react";
 import Link from "next/link";
 import { DeleteOneGoodsMediaModal } from "~/components/admin/goods-media/DeleteOneGoodsMediaModal";
 
@@ -11,17 +11,18 @@ export function GoodsMediaTableRowActions({ id }: { id: string }) {
 
   return (
     <>
-      <Group>
+      <Group gap="xs">
         <ActionIcon
           component={Link}
           href={`/admin/media/${id}`}
           variant="transparent"
-          color="orange"
+          color="dark"
+          size="xs"
         >
-          <IconEdit />
+          <IconPencil size={16} />
         </ActionIcon>
-        <ActionIcon color="red" variant="transparent" onClick={open}>
-          <IconTrash />
+        <ActionIcon size="xs" color="dark" variant="transparent" onClick={open}>
+          <IconTrash size={16} />
         </ActionIcon>
       </Group>
       <DeleteOneGoodsMediaModal close={close} id={id} opened={opened} />
