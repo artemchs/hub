@@ -1,6 +1,7 @@
-import { type PrismaTransaction } from "~/server/db";
-import { type ReadManyGoodsImportsInput } from "~/utils/validation/goods/import/readManyGoodsImports";
 import { type Prisma } from "@prisma/client";
+import { type PrismaTransaction } from "~/server/db";
+import { mapColumnFilterToPrismaCondition } from "~/utils/table/mapColumnFilterToPrismaCondition";
+import { type ReadManyGoodsImportsInput } from "~/utils/validation/goods/import/readManyGoodsImports";
 
 export const readManyGoodsImports = async ({
   tx,
@@ -9,39 +10,38 @@ export const readManyGoodsImports = async ({
   tx: PrismaTransaction;
   payload: ReadManyGoodsImportsInput;
 }) => {
-  const { search, filters, cursor, limit, orderBy } = payload;
+  // Convert filters to Prisma conditions
+  const filterConditions =
+    payload.columnFilters?.map(({ id, value }) =>
+      mapColumnFilterToPrismaCondition({
+        id,
+        value,
+        columnFilterFn: payload.columnFilterFns[id] ?? "equals",
+      })
+    ) || [];
 
-  const query: Prisma.GoodsImportFindManyArgs = {
-    where: {},
-    take: limit,
-    cursor: cursor ? { id: cursor } : undefined,
-    skip: cursor ? 1 : 0,
-    orderBy: orderBy ? { [orderBy.field]: orderBy.direction } : undefined,
+  const where: Prisma.GoodsImportWhereInput = {
+    AND: filterConditions.length > 0 ? filterConditions : undefined,
   };
 
-  if (query.where) {
-    if (search) {
-      query.where.OR = [
-        {
-          fileKey: {
-            contains: search,
-            mode: "insensitive",
-          },
-        },
-      ];
-    }
+  // Build orderBy from sorting
+  const orderBy = payload.sorting.map((sort) => ({
+    [sort.id]: sort.desc ? "desc" : "asc",
+  }));
 
-    if (filters?.schemaId) {
-      query.where.schemaId = filters.schemaId;
-    }
-
-    if (filters?.status) {
-      query.where.status = filters.status;
-    }
-  }
-
-  return await Promise.all([
-    tx.goodsImport.findMany(query),
-    tx.goodsImport.count({ where: query.where }),
+  const [items, total] = await Promise.all([
+    tx.goodsImport.findMany({
+      skip: payload.pagination.pageIndex * payload.pagination.pageSize,
+      take: payload.pagination.pageSize,
+      where,
+      orderBy,
+    }),
+    tx.goodsImport.count({ where }),
   ]);
+
+  return {
+    items,
+    total,
+    pageCount: Math.ceil(total / payload.pagination.pageSize),
+  };
 };

@@ -6,8 +6,16 @@
 @import "tailwindcss/utilities" layer(tw_utilities);
 
 /* import mantine */
-@import "@mantine/core/styles.css";
-@import "@mantine/dates/styles.css";
+@import "@mantine/core/styles.layer.css";
+@import "@mantine/dates/styles.layer.css";
 @import "mantine-react-table/styles.css";
-@import "@mantine/dropzone/styles.css";
-@import "@mantine/tiptap/styles.css";
+@import "@mantine/dropzone/styles.layer.css";
+@import "@mantine/tiptap/styles.layer.css";
+
+ul {
+  list-style: disc;
+}
+
+ol {
+  list-style: decimal;
+}

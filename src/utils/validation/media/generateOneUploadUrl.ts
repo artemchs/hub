@@ -1,7 +1,7 @@
 import { z } from "zod";
 
 export const generateOneUploadUrlSchema = z.object({
-  dir: z.enum(["Media"]),
+  dir: z.enum(["Media", "Import"]),
 });
 
 export type GenerateOneUploadUrlInput = z.infer<

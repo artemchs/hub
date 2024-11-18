@@ -8,12 +8,14 @@ interface GoodsImportSchemaComboboxProps {
   id: string | null;
   setId: (id: string | null) => void;
   label?: string;
+  withAsterisk?: boolean;
 }
 
 export function GoodsImportSchemaCombobox({
   id,
   setId,
   label,
+  withAsterisk,
 }: GoodsImportSchemaComboboxProps) {
   const useGoodsImportSchemas = (globalFilter: string) =>
     api.goods.import.schemas.readManyInfinite.useInfiniteQuery(
@@ -27,6 +29,7 @@ export function GoodsImportSchemaCombobox({
 
   return (
     <DataCombobox
+      withAsterisk={withAsterisk}
       id={id}
       setId={setId}
       label={label}

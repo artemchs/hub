@@ -74,7 +74,10 @@ export const uploadMappedGoodsToDb = async ({
         }
       }
 
-      const attributeValueIds: string[] = [];
+      const attributes: {
+        id: string;
+        valueId: string;
+      }[] = [];
       if (good.attributes) {
         for (const { id, value } of good.attributes) {
           const attributeValue = await tx.goodsAttributeValue.findFirst({
@@ -93,11 +96,60 @@ export const uploadMappedGoodsToDb = async ({
             });
 
             if (createdAttributeValue) {
-              attributeValueIds.push(createdAttributeValue.id);
+              attributes.push({
+                id: id,
+                valueId: createdAttributeValue.id,
+              });
             }
           } else {
-            attributeValueIds.push(attributeValue.id);
+            attributes.push({
+              id: id,
+              valueId: attributeValue.id,
+            });
           }
+        }
+      }
+
+      const characteristics: {
+        id: string;
+        valueIds: string[];
+      }[] = [];
+      if (good.characteristics) {
+        for (const { id, values } of good.characteristics) {
+          const characteristicValues = await Promise.all(
+            values.map(async (value) => {
+              const characteristicValue =
+                await tx.goodsCharacteristicValue.findFirst({
+                  where: {
+                    characteristicId: id,
+                    value,
+                  },
+                });
+
+              if (!characteristicValue) {
+                const createdCharacteristicValue =
+                  await tx.goodsCharacteristicValue.create({
+                    data: {
+                      characteristicId: id,
+                      value,
+                    },
+                  });
+
+                if (createdCharacteristicValue) {
+                  return createdCharacteristicValue.id;
+                }
+              } else {
+                return characteristicValue.id;
+              }
+            })
+          );
+
+          characteristics.push({
+            id,
+            valueIds: characteristicValues.filter(
+              (value): value is string => value !== undefined
+            ),
+          });
         }
       }
 
@@ -106,11 +158,17 @@ export const uploadMappedGoodsToDb = async ({
         sku: good.sku ?? "",
         description: good.description ?? undefined,
         quantity: good.quantity ? Number(good.quantity) : undefined,
-        price,
-        fullPrice,
+        price: price?.toNumber() ?? undefined,
+        fullPrice: fullPrice?.toNumber() ?? undefined,
         mediaKeys: good.mediaKeys ?? undefined,
-        idValueIds,
-        attributeValueIds,
+        idValueIds:
+          idValueIds && idValueIds.length > 0 ? idValueIds : undefined,
+        attributes:
+          attributes && attributes.length > 0 ? attributes : undefined,
+        characteristics:
+          characteristics && characteristics.length > 0
+            ? characteristics
+            : undefined,
       };
 
       const existingGood = await tx.good.findFirst({

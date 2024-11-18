@@ -26,6 +26,7 @@ interface DataComboboxProps<T> {
   };
   getOptionLabel: (item: T) => string;
   disabled?: boolean;
+  withAsterisk?: boolean;
 }
 
 export function DataCombobox<T extends { id: string }>({
@@ -36,6 +37,7 @@ export function DataCombobox<T extends { id: string }>({
   useInfiniteQuery,
   getOptionLabel,
   disabled,
+  withAsterisk,
 }: DataComboboxProps<T>) {
   const [globalFilter, setGlobalFilter] = useDebouncedState("", 300);
 
@@ -106,6 +108,7 @@ export function DataCombobox<T extends { id: string }>({
     >
       <Combobox.Target>
         <InputBase
+          withAsterisk={withAsterisk}
           label={label}
           component="button"
           type="button"

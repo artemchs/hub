@@ -25,9 +25,9 @@ export const readManyGoods = async ({
 
   // Add global filter if present
   if (payload.globalFilter) {
-    // filterConditions.push({
-    //   name: { contains: payload.globalFilter, mode: "insensitive" },
-    // });
+    filterConditions.push({
+      name: { contains: payload.globalFilter, mode: "insensitive" },
+    });
   }
 
   const where: Prisma.GoodWhereInput = {

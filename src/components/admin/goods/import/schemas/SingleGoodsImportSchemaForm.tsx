@@ -43,6 +43,7 @@ export function SingleGoodsImportSchemaForm({
   const form = useForm({
     mode: "controlled",
     initialValues: initialValues ?? {
+      id: mode === "update" ? "" : undefined,
       name: "",
       schema: {
         name: "",

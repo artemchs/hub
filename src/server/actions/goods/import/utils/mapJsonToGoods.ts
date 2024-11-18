@@ -13,6 +13,7 @@ export type MappedGood = {
   quantity: string | null;
   mediaKeys: string[] | null;
   attributes: { id: string; value: string }[];
+  characteristics: { id: string; values: string[] }[];
   ids: { id: string; value: string }[];
 };
 
@@ -67,6 +68,8 @@ export const mapJsonToGoods = (
       const percentageDiscount = schema.percentageDiscount
         ? item[schema.percentageDiscount]
           ? String(item[schema.percentageDiscount])
+              .replace("%", "")
+              .replace(",", ".")
           : null
         : null;
 
@@ -110,6 +113,21 @@ export const mapJsonToGoods = (
           })
         : [];
 
+      const characteristics = schema.characteristics
+        ? schema.characteristics.map((characteristic) => {
+            if (!item[characteristic.field]) {
+              throw new Error(
+                `Characteristic field is required. Item with SKU: ${sku}`
+              );
+            }
+
+            return {
+              id: characteristic.id,
+              values: String(item[characteristic.field]).split(","),
+            };
+          })
+        : [];
+
       mappedGoods.push({
         name,
         sku,
@@ -124,6 +142,7 @@ export const mapJsonToGoods = (
         mediaKeys,
         attributes,
         ids,
+        characteristics,
       });
     }
 

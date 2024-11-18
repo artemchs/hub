@@ -13,6 +13,7 @@ import {
   IconIdBadge2,
   IconPhoto,
   IconRuler2,
+  IconTableImport,
 } from "@tabler/icons-react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
@@ -28,6 +29,11 @@ const linkData = [
     label: "Товары",
     leftSection: <IconBooks className="h-4 w-4" />,
     href: "/admin/goods",
+  },
+  {
+    label: "Импорт товаров",
+    leftSection: <IconTableImport className="h-4 w-4" />,
+    href: "/admin/goods/import",
   },
   {
     label: "Схемы импорта",

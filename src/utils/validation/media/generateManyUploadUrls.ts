@@ -1,7 +1,7 @@
 import { z } from "zod";
 
 export const generateManyUploadUrlsSchema = z.object({
-  dir: z.enum(["Media"]),
+  dir: z.enum(["Media", "Import"]),
   count: z.number(),
 });
 
