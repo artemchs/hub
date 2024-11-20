@@ -46,7 +46,6 @@ export function useSingleUpload() {
   };
 }
 
-// In useUpload.tsx
 export function useMultipleUpload() {
   const apiUtils = api.useUtils();
   const [isPending, setIsPending] = useState(false);
@@ -130,5 +129,93 @@ export function useMultipleUpload() {
     uploadMultipleFiles: uploadMultiple,
     isUploadMultipleFilesPending: isPending,
     uploadMultipleFilesErrors: errors,
+  };
+}
+
+export function useMultipleUploadWithKeys() {
+  const apiUtils = api.useUtils();
+  const [isPending, setIsPending] = useState(false);
+  const [status, setStatus] = useState<
+    Record<string, "pending" | "success" | "error">
+  >({});
+
+  const uploadMultiple = async ({
+    dir,
+    files,
+  }: {
+    dir: GenerateOneUploadUrlInput["dir"];
+    files: File[];
+  }) => {
+    setIsPending(true);
+    setStatus({});
+
+    try {
+      const data = await apiUtils.media.generateManyUploadUrlsWithKeys.fetch({
+        dir,
+        keys: files.map((file) => file.name),
+      });
+
+      const results = await Promise.all(
+        data.map(async ({ originalKey, url, key }) => {
+          try {
+            setStatus((prev) => ({
+              ...prev,
+              [originalKey]: "pending",
+            }));
+
+            const file = files.find((file) => file.name === originalKey);
+            if (!file) {
+              setStatus((prev) => ({
+                ...prev,
+                [originalKey]: "error",
+              }));
+              return null;
+            }
+
+            const response = await fetch(url, {
+              method: "PUT",
+              body: file,
+              headers: {
+                "Content-Type": file.type,
+                "Content-Length": file.size.toString(),
+              },
+            });
+
+            if (!response.ok) {
+              setStatus((prev) => ({
+                ...prev,
+                [originalKey]: "error",
+              }));
+              return null;
+            }
+
+            setStatus((prev) => ({
+              ...prev,
+              [originalKey]: "success",
+            }));
+
+            return { key, fileName: originalKey };
+          } catch (error) {
+            console.error(error);
+            return null;
+          }
+        })
+      );
+
+      return results.filter(
+        (result): result is { key: string; fileName: string } => result !== null
+      );
+    } catch (error) {
+
+      return [];
+    } finally {
+      setIsPending(false);
+    }
+  };
+
+  return {
+    uploadMultipleFilesWithKeys: uploadMultiple,
+    uploadMultipleFilesWithKeysPending: isPending,
+    uploadMultipleFilesWithKeysStatus: status,
   };
 }

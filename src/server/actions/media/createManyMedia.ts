@@ -8,10 +8,22 @@ export const createManyMedia = async ({
   tx: PrismaTransaction;
   payload: CreateManyMediaInput;
 }) => {
-  return tx.goodsMedia.createMany({
-    data: payload.files.map(({ key, name }) => ({
-      key,
-      name,
-    })),
-  });
+  for (const file of payload.files) {
+    const goodsMedia = await tx.goodsMedia.findUnique({
+      where: {
+        key: file.key,
+      },
+    });
+
+    if (goodsMedia) {
+      continue;
+    }
+
+    await tx.goodsMedia.create({
+      data: {
+        key: file.key,
+        name: file.name,
+      },
+    });
+  }
 };

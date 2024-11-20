@@ -1,7 +1,10 @@
 import { type S3Client } from "@aws-sdk/client-s3";
 import { createId } from "@paralleldrive/cuid2";
 import { generateUploadUrl } from "~/server/utils/storage/generate-upload-url";
-import { type GenerateManyUploadUrlsInput } from "~/utils/validation/media/generateManyUploadUrls";
+import {
+  GenerateManyUploadUrlsWithKeysInput,
+  type GenerateManyUploadUrlsInput,
+} from "~/utils/validation/media/generateManyUploadUrls";
 
 export const generateManyUploadUrls = async ({
   storage,
@@ -22,4 +25,23 @@ export const generateManyUploadUrls = async ({
     urls,
     keys,
   };
+};
+
+export const generateManyUploadUrlsWithKeys = async ({
+  storage,
+  payload,
+}: {
+  storage: S3Client;
+  payload: GenerateManyUploadUrlsWithKeysInput;
+}) => {
+  const result: { key: string; url: string; originalKey: string }[] = [];
+
+  for (const key of payload.keys) {
+    const url = await generateUploadUrl(storage, {
+      Key: `${payload.dir}/${key}`,
+    });
+    result.push({ key: `${payload.dir}/${key}`, url, originalKey: key });
+  }
+
+  return result;
 };

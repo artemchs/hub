@@ -1,5 +1,5 @@
 import { Box, Button } from "@mantine/core";
-import { IconPlus } from "@tabler/icons-react";
+import { IconPlus, IconTableImport } from "@tabler/icons-react";
 import type { MRT_TableInstance } from "mantine-react-table";
 import Link from "next/link";
 import type { RouterOutputs } from "~/trpc/react";
@@ -17,6 +17,14 @@ export function GoodsTableCustomActions({
         href="/admin/goods/create"
       >
         Создать
+      </Button>
+      <Button
+        variant="subtle"
+        leftSection={<IconTableImport className="h-4 w-4" />}
+        component={Link}
+        href="/admin/goods/import/create"
+      >
+        Импортировать
       </Button>
     </Box>
   );

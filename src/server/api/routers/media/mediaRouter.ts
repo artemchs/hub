@@ -8,12 +8,16 @@ import {
 } from "./handlers/readManyGoodsMediaHandler";
 import { readOneGoodsMediaHandler } from "./handlers/readOneGoodsMediaHandler";
 import { updateOneGoodsMediaHandler } from "./handlers/updateOneGoodsmediaHandler";
-import { generateManyUploadUrlsHandler } from "./handlers/generateManyUploadUrlsHandler";
+import {
+  generateManyUploadUrlsHandler,
+  generateManyUploadUrlsWithKeysHandler,
+} from "./handlers/generateManyUploadUrlsHandler";
 import { createManyGoodsMediaHandler } from "./handlers/createManyGoodsMediaHandler";
 
 export const mediaRouter = createTRPCRouter({
   generateOneUploadUrl: generateOneUploadUrlHandler,
   generateManyUploadUrls: generateManyUploadUrlsHandler,
+  generateManyUploadUrlsWithKeys: generateManyUploadUrlsWithKeysHandler,
   createOne: createOneGoodsMediaHandler,
   createMany: createManyGoodsMediaHandler,
   readOne: readOneGoodsMediaHandler,
