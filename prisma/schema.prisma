@@ -266,6 +266,8 @@ model GoodsExport {
     fileKey  String?
     schema   GoodsExportSchema? @relation(fields: [schemaId], references: [id])
     schemaId String?
+    job      GoodsExportJob?    @relation(fields: [jobId], references: [id])
+    jobId    String?
 }
 
 model GoodsExportSchema {
@@ -277,6 +279,7 @@ model GoodsExportSchema {
     template    GoodsExportTemplate
     exports     GoodsExport[]
     identifiers GoodsExportSchemaToAdditionalId[]
+    jobs        GoodsExportJob[]
 }
 
 enum GoodsExportTemplate {
@@ -292,4 +295,17 @@ model GoodsExportSchemaToAdditionalId {
     index Int
 
     @@id([schemaId, identifierId])
+}
+
+model GoodsExportJob {
+    id        String   @id @default(cuid())
+    createdAt DateTime @default(now())
+    updatedAt DateTime @updatedAt
+
+    name      String
+    schedule  DateTime
+    exports   GoodsExport[]
+    nextRunAt DateTime
+    schema    GoodsExportSchema @relation(fields: [schemaId], references: [id], onDelete: Cascade)
+    schemaId  String
 }
