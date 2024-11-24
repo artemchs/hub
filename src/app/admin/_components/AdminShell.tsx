@@ -8,11 +8,13 @@ import {
   IconBooks,
   IconCategory,
   IconDiamond,
+  IconFileExport,
   IconFileImport,
   IconHome,
   IconIdBadge2,
   IconPhoto,
   IconRuler2,
+  IconTableExport,
   IconTableImport,
 } from "@tabler/icons-react";
 import Link from "next/link";
@@ -39,6 +41,16 @@ const linkData = [
     label: "Схемы импорта",
     leftSection: <IconFileImport className="h-4 w-4" />,
     href: "/admin/goods/import/schemas",
+  },
+  {
+    label: "Экспорт товаров",
+    leftSection: <IconTableExport className="h-4 w-4" />,
+    href: "/admin/goods/export",
+  },
+  {
+    label: "Схемы экспорта",
+    leftSection: <IconFileExport className="h-4 w-4" />,
+    href: "/admin/goods/export/schemas",
   },
   {
     label: "Категории",

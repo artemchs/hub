@@ -8,9 +8,11 @@ import {
 } from "./handlers/readManyGoodsHandler";
 import { updateOneGoodHandler } from "./handlers/updateOneGoodHandler";
 import { deleteOneGoodHandler } from "./handlers/deleteOneGoodHandler";
+import { goodsExportRouter } from "./export/goodsExportRouter";
 
 export const goodsRouter = createTRPCRouter({
   import: goodsImportRouter,
+  export: goodsExportRouter,
   createOne: createOneGoodHandler,
   readOne: readOneGoodHandler,
   readMany: readManyGoodsHandler,

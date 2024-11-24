@@ -163,8 +163,9 @@ model GoodsId {
     createdAt DateTime @default(now())
     updatedAt DateTime @updatedAt
 
-    name   String
-    values GoodsIdValue[]
+    name               String
+    values             GoodsIdValue[]
+    goodsExportSchemas GoodsExportSchemaToAdditionalId[]
 }
 
 model GoodsIdValue {
@@ -253,4 +254,42 @@ model GoodsImportSchema {
     name    String
     schema  Json
     imports GoodsImport[]
+}
+
+model GoodsExport {
+    id        String   @id @default(cuid())
+    createdAt DateTime @default(now())
+    updatedAt DateTime @updatedAt
+
+    status   AsyncJobStatus     @default(PENDING)
+    message  String?            @db.Text
+    fileKey  String?
+    schema   GoodsExportSchema? @relation(fields: [schemaId], references: [id])
+    schemaId String?
+}
+
+model GoodsExportSchema {
+    id        String   @id @default(cuid())
+    createdAt DateTime @default(now())
+    updatedAt DateTime @updatedAt
+
+    name        String
+    template    GoodsExportTemplate
+    exports     GoodsExport[]
+    identifiers GoodsExportSchemaToAdditionalId[]
+}
+
+enum GoodsExportTemplate {
+    XML_ROZETKA
+}
+
+model GoodsExportSchemaToAdditionalId {
+    schema       GoodsExportSchema @relation(fields: [schemaId], references: [id], onDelete: Cascade)
+    schemaId     String
+    identifier   GoodsId           @relation(fields: [identifierId], references: [id], onDelete: Cascade)
+    identifierId String
+
+    index Int
+
+    @@id([schemaId, identifierId])
 }

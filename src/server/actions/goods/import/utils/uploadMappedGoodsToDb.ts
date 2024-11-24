@@ -171,6 +171,7 @@ export const uploadMappedGoodsToDb = async ({
             : undefined,
       };
 
+      // First, get the existing good with all its relations
       const existingGood = await tx.good.findFirst({
         where: {
           OR: idValues.map(({ id, valueId }) => ({
@@ -182,17 +183,66 @@ export const uploadMappedGoodsToDb = async ({
             },
           })),
         },
+        include: {
+          idValues: true,
+          attributeToGood: {
+            include: {
+              value: true,
+              attribute: true,
+            },
+          },
+          characteristicToGood: {
+            include: {
+              values: true,
+              characteristic: true,
+            },
+          },
+        },
       });
 
       if (!existingGood) {
         const good = await createOneGood({ tx, payload });
         console.log("Successfully created good: ", good.id);
       } else {
+        // Preserve existing IDs that aren't in the new payload
+        const existingIdValueIds = existingGood.idValues.map((v) => v.id);
+        const combinedIdValueIds = [
+          ...new Set([...(payload.idValueIds ?? []), ...existingIdValueIds]),
+        ];
+
+        // Preserve existing attributes
+        const existingAttributes = existingGood.attributeToGood.map((a) => ({
+          id: a.attribute.id,
+          valueId: a.value.id,
+        }));
+        const combinedAttributes = [
+          ...new Set(
+            [...(payload.attributes ?? []), ...existingAttributes].map(
+              JSON.stringify
+            )
+          ),
+        ].map((str) => JSON.parse(str));
+
+        // Preserve existing characteristics
+        const existingCharacteristics = existingGood.characteristicToGood.map(
+          (c) => ({
+            id: c.characteristic.id,
+            valueIds: c.values.map((v) => v.id),
+          })
+        );
+        const combinedCharacteristics = mergeCharacteristics(
+          payload.characteristics ?? [],
+          existingCharacteristics
+        );
+
         await updateOneGood({
           tx,
           payload: {
             ...payload,
             id: existingGood.id,
+            idValueIds: combinedIdValueIds,
+            attributes: combinedAttributes,
+            characteristics: combinedCharacteristics,
           },
         });
         console.log("Successfully updated good: ", existingGood.id);
@@ -203,3 +253,31 @@ export const uploadMappedGoodsToDb = async ({
     throw new Error("Failed to upload mapped goods to db");
   }
 };
+
+// Helper function to merge characteristics
+function mergeCharacteristics(
+  newCharacteristics: Array<{ id: string; valueIds: string[] }>,
+  existingCharacteristics: Array<{ id: string; valueIds: string[] }>
+): Array<{ id: string; valueIds: string[] }> {
+  const merged = new Map<string, Set<string>>();
+
+  // Add existing characteristics
+  existingCharacteristics.forEach(({ id, valueIds }) => {
+    merged.set(id, new Set(valueIds));
+  });
+
+  // Merge with new characteristics
+  newCharacteristics.forEach(({ id, valueIds }) => {
+    if (merged.has(id)) {
+      valueIds.forEach((vid) => merged.get(id)?.add(vid));
+    } else {
+      merged.set(id, new Set(valueIds));
+    }
+  });
+
+  // Convert back to array format
+  return Array.from(merged.entries()).map(([id, valueIds]) => ({
+    id,
+    valueIds: Array.from(valueIds),
+  }));
+}
