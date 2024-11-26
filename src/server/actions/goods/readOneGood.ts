@@ -40,6 +40,11 @@ export const readOneGood = async ({
           characteristic: true,
         },
       },
+      tags: {
+        orderBy: {
+          name: "asc",
+        },
+      },
     },
   });
 

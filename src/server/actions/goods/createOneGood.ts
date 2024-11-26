@@ -63,6 +63,11 @@ export const createOneGood = async ({
             })),
           }
         : undefined,
+      tags: payload.tagIds
+        ? {
+            connect: payload.tagIds.map((id) => ({ id })),
+          }
+        : undefined,
     },
   });
 };

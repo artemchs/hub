@@ -29,6 +29,7 @@ import { FormSection } from "~/components/FormSection";
 import { DraggableItems } from "~/components/DraggableItems";
 import { GoodsCharacteristicCombobox } from "../goods-characteristics/GoodsCharacteristicCombobox";
 import { GoodsCharacteristicValuesMultiselect } from "../goods-characteristics/values/GoodsCharacteristicValuesMultiselect";
+import { GoodsTagsMultiselect } from "../goods-tags/GoodsTagsMultiselect";
 
 interface SingleGoodFormProps {
   initialValues?: UpdateOneGoodInput;
@@ -56,6 +57,7 @@ export function SingleGoodForm({
       characteristics: [],
       idValueIds: [],
       mediaKeys: [],
+      tagIds: [],
       price: 0,
       fullPrice: 0,
       quantity: 0,
@@ -340,6 +342,14 @@ export function SingleGoodForm({
                 </Box>
               </Group>
             )}
+          />
+        </FormSection>
+
+        <FormSection title="Дополнительное">
+          <GoodsTagsMultiselect
+            ids={form.values.tagIds ?? []}
+            setIds={(ids) => form.setFieldValue("tagIds", ids)}
+            label="Теги"
           />
         </FormSection>
 

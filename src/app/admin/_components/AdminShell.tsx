@@ -16,6 +16,7 @@ import {
   IconRuler2,
   IconTableExport,
   IconTableImport,
+  IconTags,
 } from "@tabler/icons-react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
@@ -71,6 +72,11 @@ const linkData = [
     label: "Атрибуты",
     leftSection: <IconRuler2 className="h-4 w-4" />,
     href: "/admin/attributes",
+  },
+  {
+    label: "Теги",
+    leftSection: <IconTags className="h-4 w-4" />,
+    href: "/admin/tags",
   },
   {
     label: "Медиа",

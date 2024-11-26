@@ -15,6 +15,7 @@ export const createOneGoodSchema = z.object({
     .array(z.object({ id: z.string(), valueIds: z.array(z.string()) }))
     .optional(),
   idValueIds: z.array(z.string()).optional(),
+  tagIds: z.array(z.string()).optional(),
   mediaKeys: z.array(z.string()).optional(),
 });
 

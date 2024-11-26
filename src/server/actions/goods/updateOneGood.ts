@@ -74,6 +74,9 @@ export const updateOneGood = async ({
             }))
           : undefined,
       },
+      tags: {
+        set: payload.tagIds?.map((id) => ({ id })) ?? [],
+      },
     },
   });
 };

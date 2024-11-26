@@ -8,6 +8,7 @@ import { goodsImportColumns } from "../admin/goods/import/_components/columns";
 import { goodsImportSchemasColumns } from "../admin/goods/import/schemas/_components/columns";
 import { goodsIdsColumns } from "../admin/ids/_components/table/columns";
 import { goodsMediaColumns } from "../admin/media/_components/table/columns";
+import { goodsTagsColumns } from "../admin/tags/_components/table/columns";
 import { createTableStore } from "./create-table-store";
 
 export const useGoodsTable = createTableStore("goods", goodsColumns);
@@ -52,4 +53,9 @@ export const useGoodsExportTable = createTableStore(
 export const useGoodsExportSchemasTable = createTableStore(
   "goods-export-schemas",
   goodsExportSchemasColumns
+);
+
+export const useGoodsTagsTable = createTableStore(
+  "goods-tags",
+  goodsTagsColumns
 );
