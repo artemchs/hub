@@ -91,6 +91,7 @@ model Good {
     mediaToGood          GoodsMediaToGood[]
     attributeToGood      GoodsAttributeToGood[]
     characteristicToGood GoodsCharacteristicToGood[]
+    internalFieldValues  GoodsInternalFieldValue[]
 }
 
 model GoodsGroup {
@@ -210,6 +211,26 @@ model GoodsCharacteristicToGood {
 
     values GoodsCharacteristicValue[]
     index  Int
+}
+
+model GoodsInternalField {
+    id        String   @id @default(cuid())
+    createdAt DateTime @default(now())
+    updatedAt DateTime @updatedAt
+
+    name   String
+    values GoodsInternalFieldValue[]
+}
+
+model GoodsInternalFieldValue {
+    id        String   @id @default(cuid())
+    createdAt DateTime @default(now())
+    updatedAt DateTime @updatedAt
+
+    field   GoodsInternalField? @relation(fields: [fieldId], references: [id])
+    fieldId String?
+    value   String
+    goods   Good[]
 }
 
 model GoodsTag {
