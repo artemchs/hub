@@ -6,6 +6,7 @@ import { attributesRouter } from "./routers/attributes/attributesRouter";
 import { characteristicsRouter } from "./routers/characteristics/characteristicsRouter";
 import { tagsRouter } from "./routers/tags/tagsRouter";
 import { mediaRouter } from "./routers/media/mediaRouter";
+import { internalFieldsRouter } from "./routers/internal-fields/internalFieldsRouter";
 
 /**
  * This is the primary router for your server.
@@ -19,6 +20,7 @@ export const appRouter = createTRPCRouter({
   attributes: attributesRouter,
   characteristics: characteristicsRouter,
   tags: tagsRouter,
+  internalFields: internalFieldsRouter,
   media: mediaRouter,
 });
 
