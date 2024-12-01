@@ -6,6 +6,8 @@ import { readOneIdValue } from "../ids/values/readOneIdValue";
 import { readOneCharacteristic } from "../characteristics/readOneCharacteristic";
 import { readOneCharacteristicValue } from "../characteristics/values/readOneCharacteristicValue";
 import { readOneAttribute } from "../attributes/readOneAttribute";
+import { readOneInternalFieldValue } from "../internal-fields/values/readOneInternalFieldValue";
+import { readOneInternalField } from "../internal-fields/readOneInternalField";
 
 export const checkDbRecordsForGood = async ({
   tx,
@@ -40,6 +42,16 @@ export const checkDbRecordsForGood = async ({
   if (payload.idValueIds) {
     for (const idValueId of payload.idValueIds) {
       await readOneIdValue({ tx, payload: { id: idValueId } });
+    }
+  }
+
+  if (payload.internalFields) {
+    for (const { id, valueIds } of payload.internalFields) {
+      await readOneInternalField({ tx, payload: { id } });
+
+      for (const valueId of valueIds) {
+        await readOneInternalFieldValue({ tx, payload: { id: valueId } });
+      }
     }
   }
 

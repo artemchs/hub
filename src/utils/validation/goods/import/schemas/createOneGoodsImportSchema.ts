@@ -28,6 +28,14 @@ export const createOneGoodsImportSchemaSchema = z.object({
         })
       )
       .optional(),
+    internalFields: z
+      .array(
+        z.object({
+          id: z.string().min(1),
+          field: z.string().min(1),
+        })
+      )
+      .optional(),
     ids: z
       .array(
         z.object({

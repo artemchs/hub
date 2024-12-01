@@ -4,9 +4,10 @@ import { Modal } from "@mantine/core";
 import { api } from "~/trpc/react";
 import { type CreateOneCharacteristicValueInput } from "~/utils/validation/characteristics/values/createOneCharacteristicValue";
 import { type UpdateOneCharacteristicValueInput } from "~/utils/validation/characteristics/values/updateOneCharacteristicValue";
-import { SingleGoodsCharacteristicValueForm } from "./SingleGoodsCharacteristicValueForm";
+import { SingleGoodsInternalFieldValueForm } from "./SingleGoodsInternalFieldValueForm";
+import { UpdateOneInternalFieldValueInput } from "~/utils/validation/internal-fields/values/updateOneInternalFieldValue";
 
-export function UpdateOneGoodsCharacteristicValueModal({
+export function UpdateOneGoodsInternalFieldValueModal({
   id,
   opened,
   close,
@@ -17,26 +18,23 @@ export function UpdateOneGoodsCharacteristicValueModal({
 }) {
   const apiUtils = api.useUtils();
 
-  const { data, isFetching } = api.characteristics.values.readOne.useQuery({
+  const { data, isFetching } = api.internalFields.values.readOne.useQuery({
     id,
   });
 
-  const { mutate, isPending } =
-    api.characteristics.values.updateOne.useMutation({
+  const { mutate, isPending } = api.internalFields.values.updateOne.useMutation(
+    {
       async onSuccess() {
         await Promise.all([
-          apiUtils.characteristics.values.readManyInfinite.invalidate(),
-          apiUtils.characteristics.values.readOne.invalidate({ id }),
+          apiUtils.internalFields.values.readManyInfinite.invalidate(),
+          apiUtils.internalFields.values.readOne.invalidate({ id }),
         ]);
         close();
       },
-    });
+    }
+  );
 
-  const handleSubmit = (
-    values:
-      | CreateOneCharacteristicValueInput
-      | UpdateOneCharacteristicValueInput
-  ) => {
+  const handleSubmit = (values: UpdateOneInternalFieldValueInput) => {
     mutate({
       id,
       parentId: values.parentId,
@@ -45,16 +43,12 @@ export function UpdateOneGoodsCharacteristicValueModal({
   };
 
   return (
-    <Modal
-      opened={opened}
-      onClose={close}
-      title="Изменить значение характеристики"
-    >
-      <SingleGoodsCharacteristicValueForm
+    <Modal opened={opened} onClose={close} title="Изменить значение поля">
+      <SingleGoodsInternalFieldValueForm
         mode="update"
         initialValues={{
           id,
-          parentId: data?.characteristicId ?? "",
+          parentId: data?.fieldId ?? "",
           value: data?.value ?? "",
         }}
         onSubmit={handleSubmit}

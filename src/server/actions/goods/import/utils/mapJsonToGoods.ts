@@ -14,6 +14,7 @@ export type MappedGood = {
   mediaKeys: string[] | null;
   attributes: { id: string; value: string }[];
   characteristics: { id: string; values: string[] }[];
+  internalFields: { id: string; values: string[] }[];
   ids: { id: string; value: string }[];
 };
 
@@ -128,6 +129,21 @@ export const mapJsonToGoods = (
           })
         : [];
 
+      const internalFields = schema.internalFields
+        ? schema.internalFields.map((internalField) => {
+            if (!item[internalField.field]) {
+              throw new Error(
+                `Internal field is required. Item with SKU: ${sku}`
+              );
+            }
+
+            return {
+              id: internalField.id,
+              values: String(item[internalField.field]).split(","),
+            };
+          })
+        : [];
+
       mappedGoods.push({
         name,
         sku,
@@ -143,6 +159,7 @@ export const mapJsonToGoods = (
         attributes,
         ids,
         characteristics,
+        internalFields,
       });
     }
 

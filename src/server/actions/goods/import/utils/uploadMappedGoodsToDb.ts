@@ -153,6 +153,49 @@ export const uploadMappedGoodsToDb = async ({
         }
       }
 
+      const internalFields: {
+        id: string;
+        valueIds: string[];
+      }[] = [];
+      if (good.internalFields) {
+        for (const { id, values } of good.internalFields) {
+          const internalFieldValues = await Promise.all(
+            values.map(async (value) => {
+              const internalFieldValue =
+                await tx.goodsInternalFieldValue.findFirst({
+                  where: {
+                    fieldId: id,
+                    value,
+                  },
+                });
+
+              if (!internalFieldValue) {
+                const createdInternalFieldValue =
+                  await tx.goodsInternalFieldValue.create({
+                    data: {
+                      fieldId: id,
+                      value,
+                    },
+                  });
+
+                if (createdInternalFieldValue) {
+                  return createdInternalFieldValue.id;
+                }
+              } else {
+                return internalFieldValue.id;
+              }
+            })
+          );
+
+          internalFields.push({
+            id,
+            valueIds: internalFieldValues.filter(
+              (value): value is string => value !== undefined
+            ),
+          });
+        }
+      }
+
       const payload: CreateOneGoodInput = {
         name: good.name ?? "",
         sku: good.sku ?? "",
@@ -168,6 +211,10 @@ export const uploadMappedGoodsToDb = async ({
         characteristics:
           characteristics && characteristics.length > 0
             ? characteristics
+            : undefined,
+        internalFields:
+          internalFields && internalFields.length > 0
+            ? internalFields
             : undefined,
       };
 
@@ -197,6 +244,7 @@ export const uploadMappedGoodsToDb = async ({
               characteristic: true,
             },
           },
+          internalFieldToGood: true,
         },
       });
 
@@ -235,6 +283,18 @@ export const uploadMappedGoodsToDb = async ({
           existingCharacteristics
         );
 
+        // Preserve existing internal fields
+        const existingInternalFields = existingGood.internalFieldToGood
+          .filter((f) => f.fieldId !== null)
+          .map((f) => ({
+            id: f.fieldId!,
+            valueIds: f.values.map((v) => v.id),
+          }));
+        const combinedInternalFields = mergeInternalFields(
+          payload.internalFields ?? [],
+          existingInternalFields
+        );
+
         await updateOneGood({
           tx,
           payload: {
@@ -243,6 +303,7 @@ export const uploadMappedGoodsToDb = async ({
             idValueIds: combinedIdValueIds,
             attributes: combinedAttributes,
             characteristics: combinedCharacteristics,
+            internalFields: combinedInternalFields,
           },
         });
         console.log("Successfully updated good: ", existingGood.id);
@@ -268,6 +329,34 @@ function mergeCharacteristics(
 
   // Merge with new characteristics
   newCharacteristics.forEach(({ id, valueIds }) => {
+    if (merged.has(id)) {
+      valueIds.forEach((vid) => merged.get(id)?.add(vid));
+    } else {
+      merged.set(id, new Set(valueIds));
+    }
+  });
+
+  // Convert back to array format
+  return Array.from(merged.entries()).map(([id, valueIds]) => ({
+    id,
+    valueIds: Array.from(valueIds),
+  }));
+}
+
+// Helper function to merge internal fields
+function mergeInternalFields(
+  newInternalFields: Array<{ id: string; valueIds: string[] }>,
+  existingInternalFields: Array<{ id: string; valueIds: string[] }>
+): Array<{ id: string; valueIds: string[] }> {
+  const merged = new Map<string, Set<string>>();
+
+  // Add existing internal fields
+  existingInternalFields.forEach(({ id, valueIds }) => {
+    merged.set(id, new Set(valueIds));
+  });
+
+  // Merge with new internal fields
+  newInternalFields.forEach(({ id, valueIds }) => {
     if (merged.has(id)) {
       valueIds.forEach((vid) => merged.get(id)?.add(vid));
     } else {

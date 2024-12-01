@@ -2,8 +2,8 @@ import { type PrismaTransaction } from "~/server/db";
 import { type ReadManyInternalFieldValuesInfiniteInput } from "~/utils/validation/internal-fields/values/readManyInternalFieldValues";
 
 interface ReadManyInternalFieldValuesPayload {
-  tx: PrismaTransaction
-  payload: ReadManyInternalFieldValuesInfiniteInput
+  tx: PrismaTransaction;
+  payload: ReadManyInternalFieldValuesInfiniteInput;
 }
 
 export const readManyInternalFieldValuesInfinite = async ({
@@ -17,6 +17,7 @@ export const readManyInternalFieldValuesInfinite = async ({
         contains: payload.globalFilter,
         mode: "insensitive",
       },
+      fieldId: payload.parentId ? { equals: payload.parentId } : undefined,
     },
     cursor: payload.cursor ? { id: payload.cursor } : undefined,
     orderBy: {

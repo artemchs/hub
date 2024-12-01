@@ -5,6 +5,7 @@ import { useDisclosure } from "@mantine/hooks";
 import { LogotypeFullLink } from "~/components/branding";
 import { UserMenu } from "./UserMenu";
 import {
+  IconAlignJustified,
   IconBooks,
   IconCategory,
   IconDiamond,
@@ -77,6 +78,11 @@ const linkData = [
     label: "Теги",
     leftSection: <IconTags className="h-4 w-4" />,
     href: "/admin/tags",
+  },
+  {
+    label: "Внутренние поля",
+    leftSection: <IconAlignJustified className="h-4 w-4" />,
+    href: "/admin/internal-fields",
   },
   {
     label: "Медиа",

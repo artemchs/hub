@@ -40,6 +40,21 @@ export const readOneGood = async ({
           characteristic: true,
         },
       },
+      internalFieldToGood: {
+        orderBy: {
+          field: {
+            name: "asc",
+          },
+        },
+        include: {
+          values: {
+            orderBy: {
+              value: "asc",
+            },
+          },
+          field: true,
+        },
+      },
       tags: {
         orderBy: {
           name: "asc",

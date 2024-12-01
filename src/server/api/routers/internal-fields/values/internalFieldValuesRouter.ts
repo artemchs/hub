@@ -49,21 +49,31 @@ export const internalFieldValuesRouter = createTRPCRouter({
       }
     }),
 
-  readManyInfinite: protectedProcedure.input(readManyInternalFieldValuesInfiniteSchema).query(async ({ input, ctx }) => {
-    try {
-      return await readManyInternalFieldValuesInfinite({ tx: ctx.db, payload: input });
-    } catch (error) {
-      console.error(error);
-      throw new Error("Failed to read internal field values");
-    }
-  }),
+  readManyInfinite: protectedProcedure
+    .input(readManyInternalFieldValuesInfiniteSchema)
+    .query(async ({ input, ctx }) => {
+      try {
+        return await readManyInternalFieldValuesInfinite({
+          tx: ctx.db,
+          payload: input,
+        });
+      } catch (error) {
+        console.error(error);
+        throw new Error("Failed to read internal field values");
+      }
+    }),
 
-  deleteOne: protectedProcedure.input(readOneInternalFieldValueSchema).mutation(async ({ input, ctx }) => {
-    try {
-      return await deleteOneInternalFieldValue({ tx: ctx.db, payload: input });
-    } catch (error) {
-      console.error(error);
-      throw new Error("Failed to delete internal field value");
-    }
-  })
+  deleteOne: protectedProcedure
+    .input(readOneInternalFieldValueSchema)
+    .mutation(async ({ input, ctx }) => {
+      try {
+        return await deleteOneInternalFieldValue({
+          tx: ctx.db,
+          payload: input,
+        });
+      } catch (error) {
+        console.error(error);
+        throw new Error("Failed to delete internal field value");
+      }
+    }),
 });

@@ -13,6 +13,7 @@ import { useEffect } from "react";
 import { GoodsAttributesCombobox } from "~/components/admin/goods-attributes/GoodsAttributeCombobox";
 import { GoodsCharacteristicCombobox } from "~/components/admin/goods-characteristics/GoodsCharacteristicCombobox";
 import { GoodsIdCombobox } from "~/components/admin/goods-ids/GoodsIdCombobox";
+import { GoodsInternalFieldCombobox } from "~/components/admin/goods-internal-fields/GoodsInternalFieldCombobox";
 import { FormSection } from "~/components/FormSection";
 import {
   createOneGoodsImportSchemaSchema,
@@ -58,6 +59,7 @@ export function SingleGoodsImportSchemaForm({
         attributes: [],
         characteristics: [],
         ids: [],
+        internalFields: [],
       },
     },
     validate: zodResolver(
@@ -301,6 +303,63 @@ export function SingleGoodsImportSchemaForm({
                   label="Колонка"
                   key={form.key(`schema.ids.${index}.field`)}
                   {...form.getInputProps(`schema.ids.${index}.field`)}
+                />
+              </Stack>
+            </Group>
+          </Paper>
+        ))}
+      </FormSection>
+      <FormSection
+        title="Внутренние поля"
+        topLeftChildren={
+          <Button
+            variant="subtle"
+            onClick={() =>
+              form.setFieldValue("schema.internalFields", [
+                ...(form.values.schema.internalFields ?? []),
+                {
+                  id: "",
+                  field: "",
+                },
+              ])
+            }
+          >
+            Добавить внутреннее поле
+          </Button>
+        }
+      >
+        {form.values.schema.internalFields?.map(({ id }, index) => (
+          <Paper p="md" shadow="xs" withBorder key={index}>
+            <Group>
+              <ActionIcon
+                size="xs"
+                variant="transparent"
+                color="red"
+                onClick={() =>
+                  form.setFieldValue(
+                    "schema.internalFields",
+                    form.values.schema.internalFields?.filter(
+                      (_, i) => i !== index
+                    )
+                  )
+                }
+              >
+                <IconTrash size={16} />
+              </ActionIcon>
+              <Stack className="flex-1 flex-col">
+                <GoodsInternalFieldCombobox
+                  label="Внутреннее поле"
+                  id={id}
+                  setId={(id) =>
+                    form.setFieldValue(`schema.internalFields.${index}.id`, id)
+                  }
+                />
+                <TextInput
+                  label="Колонка"
+                  key={form.key(`schema.internalFields.${index}.field`)}
+                  {...form.getInputProps(
+                    `schema.internalFields.${index}.field`
+                  )}
                 />
               </Stack>
             </Group>

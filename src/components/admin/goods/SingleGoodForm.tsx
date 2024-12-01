@@ -30,6 +30,8 @@ import { DraggableItems } from "~/components/DraggableItems";
 import { GoodsCharacteristicCombobox } from "../goods-characteristics/GoodsCharacteristicCombobox";
 import { GoodsCharacteristicValuesMultiselect } from "../goods-characteristics/values/GoodsCharacteristicValuesMultiselect";
 import { GoodsTagsMultiselect } from "../goods-tags/GoodsTagsMultiselect";
+import { GoodsInternalFieldCombobox } from "../goods-internal-fields/GoodsInternalFieldCombobox";
+import { GoodsInternalFieldValuesMultiselect } from "../goods-internal-fields/values/GoodsInternalFieldValuesMultiselect";
 
 interface SingleGoodFormProps {
   initialValues?: UpdateOneGoodInput;
@@ -58,6 +60,7 @@ export function SingleGoodForm({
       idValueIds: [],
       mediaKeys: [],
       tagIds: [],
+      internalFields: [],
       price: 0,
       fullPrice: 0,
       quantity: 0,
@@ -345,7 +348,72 @@ export function SingleGoodForm({
           />
         </FormSection>
 
-        <FormSection title="Дополнительное">
+        <FormSection
+          title="Внутренние поля"
+          topLeftChildren={
+            <Button
+              variant="subtle"
+              onClick={() =>
+                form.setFieldValue("internalFields", [
+                  ...(form.values.characteristics ?? []),
+                  { id: "", valueIds: [] },
+                ])
+              }
+            >
+              Добавить внутреннее поле
+            </Button>
+          }
+        >
+          <Stack>
+            {form.values.internalFields?.map((internalField, index) => (
+              <Group gap="md" align="start" key={index}>
+                <Stack justify="space-between" gap="xs">
+                  <ActionIcon
+                    variant="transparent"
+                    color="red"
+                    size="xs"
+                    onClick={() =>
+                      form.setFieldValue(
+                        "internalFields",
+                        form.values.internalFields?.filter(
+                          (_, i) => i !== index
+                        )
+                      )
+                    }
+                  >
+                    <IconTrash size={16} />
+                  </ActionIcon>
+                </Stack>
+                <Box className="flex-1 flex flex-col gap-2">
+                  <GoodsInternalFieldCombobox
+                    label="Внутреннее поле"
+                    id={internalField.id}
+                    setId={(id) => {
+                      form.setFieldValue(`internalFields.${index}.id`, id);
+                      form.setFieldValue(
+                        `internalFields.${index}.valueIds`,
+                        []
+                      );
+                    }}
+                  />
+                  <GoodsInternalFieldValuesMultiselect
+                    label="Значения"
+                    ids={internalField.valueIds}
+                    setIds={(ids) =>
+                      form.setFieldValue(
+                        `internalFields.${index}.valueIds`,
+                        ids
+                      )
+                    }
+                    disabled={!internalField.id}
+                  />
+                </Box>
+              </Group>
+            ))}
+          </Stack>
+        </FormSection>
+
+        <FormSection title="Теги">
           <GoodsTagsMultiselect
             ids={form.values.tagIds ?? []}
             setIds={(ids) => form.setFieldValue("tagIds", ids)}

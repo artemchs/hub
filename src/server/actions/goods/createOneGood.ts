@@ -68,6 +68,16 @@ export const createOneGood = async ({
             connect: payload.tagIds.map((id) => ({ id })),
           }
         : undefined,
+      internalFieldToGood: payload.internalFields
+        ? {
+            create: payload.internalFields.map(({ id, valueIds }) => ({
+              fieldId: id,
+              values: {
+                connect: valueIds.map((id) => ({ id })),
+              },
+            })),
+          }
+        : undefined,
     },
   });
 };

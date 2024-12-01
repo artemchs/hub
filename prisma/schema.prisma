@@ -91,7 +91,7 @@ model Good {
     mediaToGood          GoodsMediaToGood[]
     attributeToGood      GoodsAttributeToGood[]
     characteristicToGood GoodsCharacteristicToGood[]
-    internalFieldValues  GoodsInternalFieldValue[]
+    internalFieldToGood  GoodsInternalFieldToGood[]
 }
 
 model GoodsGroup {
@@ -218,8 +218,9 @@ model GoodsInternalField {
     createdAt DateTime @default(now())
     updatedAt DateTime @updatedAt
 
-    name   String
-    values GoodsInternalFieldValue[]
+    name                     String
+    values                   GoodsInternalFieldValue[]
+    GoodsInternalFieldToGood GoodsInternalFieldToGood[]
 }
 
 model GoodsInternalFieldValue {
@@ -227,10 +228,21 @@ model GoodsInternalFieldValue {
     createdAt DateTime @default(now())
     updatedAt DateTime @updatedAt
 
-    field   GoodsInternalField? @relation(fields: [fieldId], references: [id])
+    value               String
+    field               GoodsInternalField?        @relation(fields: [fieldId], references: [id])
+    fieldId             String?
+    internalFieldToGood GoodsInternalFieldToGood[]
+}
+
+model GoodsInternalFieldToGood {
+    id String @id @default(cuid())
+
+    field   GoodsInternalField? @relation(fields: [fieldId], references: [id], onDelete: Cascade)
     fieldId String?
-    value   String
-    goods   Good[]
+    good    Good?               @relation(fields: [goodId], references: [id], onDelete: Cascade)
+    goodId  String?
+
+    values GoodsInternalFieldValue[]
 }
 
 model GoodsTag {

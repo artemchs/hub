@@ -77,6 +77,19 @@ export const updateOneGood = async ({
       tags: {
         set: payload.tagIds?.map((id) => ({ id })) ?? [],
       },
+      internalFieldToGood: {
+        deleteMany: {
+          goodId: payload.id,
+        },
+        create: payload.internalFields
+          ? payload.internalFields.map(({ id, valueIds }) => ({
+              fieldId: id,
+              values: {
+                connect: valueIds.map((id) => ({ id })),
+              },
+            }))
+          : undefined,
+      },
     },
   });
 };
