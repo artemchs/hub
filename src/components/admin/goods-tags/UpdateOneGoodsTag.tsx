@@ -5,10 +5,16 @@ import { useRouter } from "next/navigation";
 import { type CreateOneTagInput } from "~/utils/validation/tags/createOneTag";
 import { type UpdateOneTagInput } from "~/utils/validation/tags/udpateOneTag";
 import { SingleGoodsTagForm } from "./SingleGoodsTagForm";
+import { FormProps } from "~/types/forms";
+import { Modal } from "@mantine/core";
+import { ModalProps } from "~/types/modals";
 
-export function UpdateOneGoodsTag({ id }: { id: string }) {
+export function UpdateOneGoodsTag({
+  id,
+  close,
+  onSuccess,
+}: { id: string } & FormProps) {
   const apiUtils = api.useUtils();
-  const router = useRouter();
 
   const { data, isFetching } = api.tags.readOne.useQuery({ id });
 
@@ -16,9 +22,12 @@ export function UpdateOneGoodsTag({ id }: { id: string }) {
     async onSuccess() {
       await Promise.all([
         apiUtils.tags.readMany.invalidate(),
+        apiUtils.tags.readManyInfinite.invalidate(),
         apiUtils.tags.readOne.invalidate({ id }),
       ]);
-      router.push("/admin/tags");
+      if (onSuccess) {
+        onSuccess();
+      }
     },
   });
 
@@ -31,11 +40,25 @@ export function UpdateOneGoodsTag({ id }: { id: string }) {
 
   return (
     <SingleGoodsTagForm
+      close={close}
       mode="update"
       initialValues={data}
       onSubmit={handleSubmit}
       isPending={isPending}
       isFetching={isFetching}
     />
+  );
+}
+
+export function UpdateOneGoodsTagModal({
+  id,
+  close,
+  opened,
+  onSuccess,
+}: { id: string } & ModalProps) {
+  return (
+    <Modal opened={opened ?? false} onClose={close} title="Изменить тег товара">
+      <UpdateOneGoodsTag id={id} close={close} onSuccess={onSuccess} />
+    </Modal>
   );
 }

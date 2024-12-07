@@ -1,16 +1,19 @@
-export type CreateOneModal = React.ComponentType<{
-  opened: boolean;
+export type ModalProps = {
   close: () => void;
-}>;
+  onSuccess: () => Promise<void>;
+  opened?: boolean;
+};
 
-export type UpdateOneModal = React.ComponentType<{
-  opened: boolean;
-  close: () => void;
-  id: string;
-}>;
+export type CreateOneModal = React.ComponentType<ModalProps>;
 
-export type DeleteOneModal = React.ComponentType<{
-  opened: boolean;
-  close: () => void;
-  id: string;
-}>;
+export type UpdateOneModal = React.ComponentType<
+  ModalProps & {
+    id: string;
+  }
+>;
+
+export type DeleteOneModal = React.ComponentType<
+  ModalProps & {
+    id: string;
+  }
+>;

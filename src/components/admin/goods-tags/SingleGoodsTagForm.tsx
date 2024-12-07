@@ -3,6 +3,7 @@ import { useForm } from "@mantine/form";
 import { zodResolver } from "mantine-form-zod-resolver";
 import Link from "next/link";
 import { useEffect } from "react";
+import { FormProps } from "~/types/forms";
 import {
   type CreateOneTagInput,
   createOneTagSchema,
@@ -12,7 +13,7 @@ import {
   updateOneTagSchema,
 } from "~/utils/validation/tags/udpateOneTag";
 
-interface SingleGoodsTagFormProps {
+interface SingleGoodsTagFormProps extends FormProps {
   initialValues?: UpdateOneTagInput;
   onSubmit: (values: CreateOneTagInput | UpdateOneTagInput) => void;
   isPending?: boolean;
@@ -26,6 +27,7 @@ export function SingleGoodsTagForm({
   isPending,
   isFetching,
   mode,
+  close,
 }: SingleGoodsTagFormProps) {
   const form = useForm({
     mode: "uncontrolled",
@@ -58,7 +60,7 @@ export function SingleGoodsTagForm({
         {...form.getInputProps("name")}
       />
       <Group justify="flex-end" mt="md">
-        <Button variant="subtle" component={Link} href="/admin/ids">
+        <Button variant="subtle" onClick={close}>
           Отменить
         </Button>
         <Button type="submit" loading={isPending}>

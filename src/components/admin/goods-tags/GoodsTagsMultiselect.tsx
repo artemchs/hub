@@ -3,6 +3,9 @@
 import { DataMultiSelect } from "~/components/DataMultiselect";
 import { api } from "~/trpc/react";
 import { DisplayOneGoodsTagName } from "./DisplayOneGoodsTagName";
+import { CreateOneGoodsTagModal } from "./CreateOneGoodsTag";
+import { UpdateOneGoodsTagModal } from "./UpdateOneGoodsTag";
+import { DeleteOneGoodsTagModal } from "./DeleteOneGoodsTagModal";
 
 interface GoodsTagsMultiselectProps {
   ids: string[];
@@ -17,6 +20,8 @@ export function GoodsTagsMultiselect({
   label,
   disabled,
 }: GoodsTagsMultiselectProps) {
+  const apiUtils = api.useUtils();
+
   const useTags = (globalFilter: string) =>
     api.tags.readManyInfinite.useInfiniteQuery(
       {
@@ -36,6 +41,18 @@ export function GoodsTagsMultiselect({
       useInfiniteQuery={useTags}
       getOptionLabel={(item) => item.name}
       disabled={disabled}
+      CreateOneModal={{
+        Component: CreateOneGoodsTagModal,
+        onSuccess: async () => {},
+      }}
+      UpdateOneModal={{
+        Component: UpdateOneGoodsTagModal,
+        onSuccess: async () => {},
+      }}
+      DeleteOneModal={{
+        Component: DeleteOneGoodsTagModal,
+        onSuccess: async () => {},
+      }}
     />
   );
 }

@@ -18,12 +18,16 @@ import {
   Button,
   ActionIcon,
   type ComboboxStore,
+  Stack,
+  Divider,
+  Box,
 } from "@mantine/core";
 import { useDebouncedState, useDisclosure } from "@mantine/hooks";
 import { IconPencil, IconPlus, IconTrash } from "@tabler/icons-react";
 import type {
   CreateOneModal,
   DeleteOneModal,
+  ModalProps,
   UpdateOneModal,
 } from "~/types/modals";
 
@@ -40,9 +44,18 @@ interface DataMultiSelectProps<T> {
     isFetchingNextPage: boolean;
   };
   getOptionLabel: (item: T) => string;
-  CreateOneModal?: CreateOneModal;
-  UpdateOneModal?: UpdateOneModal;
-  DeleteOneModal?: DeleteOneModal;
+  CreateOneModal?: {
+    Component: CreateOneModal;
+    onSuccess: ModalProps["onSuccess"];
+  };
+  UpdateOneModal?: {
+    Component: UpdateOneModal;
+    onSuccess: ModalProps["onSuccess"];
+  };
+  DeleteOneModal?: {
+    Component: DeleteOneModal;
+    onSuccess: ModalProps["onSuccess"];
+  };
   disabled?: boolean;
 }
 
@@ -195,60 +208,72 @@ export function DataMultiSelect<T extends { id: string }>({
           </PillsInput>
         </Combobox.DropdownTarget>
 
-        <Combobox.Dropdown>
-          <ScrollArea.Autosize type="scroll" mah={200}>
-            <Combobox.Options>
-              {isLoading ? (
-                <Combobox.Empty>Загрузка...</Combobox.Empty>
-              ) : isError ? (
-                <Combobox.Empty>Ошибка загрузки</Combobox.Empty>
-              ) : options && options.length > 0 ? (
-                options
-              ) : (
-                <Combobox.Empty>
-                  {CreateOneModal ? (
-                    <Button
-                      type="button"
-                      leftSection={<IconPlus className="h-4 w-4" />}
-                      variant="light"
-                      fullWidth
-                      onClick={() => {
-                        openCreateOneModal();
-                        combobox.closeDropdown();
-                      }}
-                    >
-                      Создать &quot;{search}&quot;
-                    </Button>
-                  ) : (
-                    "Нет результатов"
-                  )}
-                </Combobox.Empty>
-              )}
-            </Combobox.Options>
-          </ScrollArea.Autosize>
+        <Combobox.Dropdown maw="250">
+          <Stack gap="sm">
+            <ScrollArea.Autosize type="scroll" mah={200}>
+              <Combobox.Options>
+                {isLoading ? (
+                  <Combobox.Empty>Загрузка...</Combobox.Empty>
+                ) : isError ? (
+                  <Combobox.Empty>Ошибка загрузки</Combobox.Empty>
+                ) : options && options.length > 0 ? (
+                  options
+                ) : (
+                  <Combobox.Empty>Нет результатов</Combobox.Empty>
+                )}
+              </Combobox.Options>
+            </ScrollArea.Autosize>
+            {CreateOneModal && (
+              <Button
+                type="button"
+                leftSection={<IconPlus size={16} />}
+                variant="subtle"
+                size="sm"
+                fullWidth
+                onClick={() => {
+                  openCreateOneModal();
+                  combobox.closeDropdown();
+                }}
+              >
+                Создать
+              </Button>
+            )}
+          </Stack>
         </Combobox.Dropdown>
       </Combobox>
 
       {CreateOneModal && (
-        <CreateOneModal
+        <CreateOneModal.Component
           opened={createOneModalOpened}
           close={handleCloseCreateOne}
+          onSuccess={async () => {
+            await CreateOneModal.onSuccess();
+            handleCloseCreateOne();
+          }}
         />
       )}
 
       {UpdateOneModal && editOneModalOpened.id && (
-        <UpdateOneModal
+        <UpdateOneModal.Component
           id={editOneModalOpened.id}
           opened={editOneModalOpened.opened}
           close={handleCloseUpdateOne}
+          onSuccess={async () => {
+            await UpdateOneModal.onSuccess();
+            handleCloseUpdateOne();
+          }}
         />
       )}
 
       {DeleteOneModal && deleteOneModalOpened.id && (
-        <DeleteOneModal
+        <DeleteOneModal.Component
           id={deleteOneModalOpened.id}
           opened={deleteOneModalOpened.opened}
           close={handleCloseDeleteOne}
+          onSuccess={async () => {
+            await DeleteOneModal.onSuccess();
+            handleCloseDeleteOne();
+          }}
         />
       )}
     </>
@@ -262,8 +287,14 @@ interface DataMultiSelectOptionProps<T> {
   isLastItem: boolean;
   ids: string[];
   getOptionLabel: (item: T) => string;
-  UpdateOneModal?: UpdateOneModal;
-  DeleteOneModal?: DeleteOneModal;
+  UpdateOneModal?: {
+    Component: UpdateOneModal;
+    onSuccess: ModalProps["onSuccess"];
+  };
+  DeleteOneModal?: {
+    Component: DeleteOneModal;
+    onSuccess: ModalProps["onSuccess"];
+  };
   combobox: ComboboxStore;
   setEditOneModalOpened: Dispatch<
     SetStateAction<{
@@ -310,6 +341,7 @@ function DataMultiSelectOption<T extends { id: string }>({
               size="xs"
               type="button"
               variant="transparent"
+              color="dark"
               onClick={(e) => {
                 e.stopPropagation();
                 combobox.closeDropdown();
@@ -327,7 +359,7 @@ function DataMultiSelectOption<T extends { id: string }>({
               size="xs"
               type="button"
               variant="transparent"
-              c="red"
+              color="dark"
               onClick={(e) => {
                 e.stopPropagation();
                 combobox.closeDropdown();
