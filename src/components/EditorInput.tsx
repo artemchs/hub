@@ -17,8 +17,13 @@ import TableRow from "@tiptap/extension-table-row";
 import { TEXT_EDITOR_LABELS_RU } from "~/utils/miscellaneous/textEditorLabels";
 import { Input, type InputWrapperProps } from "@mantine/core";
 import { IconTable } from "@tabler/icons-react";
+import { useEffect } from "react";
 
-export function EditorInput(props: InputWrapperProps) {
+export function EditorInput(
+  props: InputWrapperProps & {
+    value?: string;
+  }
+) {
   const editor = useEditor({
     extensions: [
       StarterKit,
@@ -35,15 +40,25 @@ export function EditorInput(props: InputWrapperProps) {
       TableHeader,
       TableCell,
     ],
-    content: props.defaultValue ? props.defaultValue.toString() : "",
+    content: props.value || "",
     onUpdate({ editor }) {
       const content = editor.getHTML();
       if (props.onChange) {
         props.onChange(content as never);
       }
     },
-    immediatelyRender: false,
+    immediatelyRender: true,
   });
+
+  // Add this effect to sync editor content with props.value
+  useEffect(() => {
+    if (editor && props.value !== undefined) {
+      const currentContent = editor.getHTML();
+      if (currentContent !== props.value) {
+        editor.commands.setContent(props.value);
+      }
+    }
+  }, [editor, props.value]);
 
   return (
     <Input.Wrapper {...props}>

@@ -108,7 +108,9 @@ export function SingleGoodForm({
       if (Object.keys(uploadMultipleFilesErrors).length > 0) {
         form.setFieldError(
           "mediaKeys",
-          `Some files failed to upload: ${Object.values(uploadMultipleFilesErrors).join(", ")}`
+          `Some files failed to upload: ${Object.values(
+            uploadMultipleFilesErrors
+          ).join(", ")}`
         );
       }
     } catch (error) {
