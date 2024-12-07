@@ -9,19 +9,37 @@ import {
   Paper,
   ActionIcon,
   Flex,
+  Box,
+  Stack,
 } from "@mantine/core";
 import {
   IconUpload,
   IconPhoto,
   IconX,
   IconGripVertical,
+  IconGridDots,
 } from "@tabler/icons-react";
 import {
   Dropzone,
   type DropzoneProps,
   IMAGE_MIME_TYPE,
 } from "@mantine/dropzone";
-import { DragDropContext, Droppable, Draggable } from "@hello-pangea/dnd";
+import {
+  DndContext,
+  closestCenter,
+  KeyboardSensor,
+  PointerSensor,
+  useSensor,
+  useSensors,
+  DragEndEvent,
+} from "@dnd-kit/core";
+import {
+  SortableContext,
+  horizontalListSortingStrategy,
+  useSortable,
+} from "@dnd-kit/sortable";
+import { CSS } from "@dnd-kit/utilities";
+import { restrictToParentElement } from "@dnd-kit/modifiers";
 
 const MAX_MB = 5;
 
@@ -35,6 +53,78 @@ interface ImageDropzoneProps extends Omit<Partial<DropzoneProps>, "onChange"> {
   error?: string | null;
 }
 
+function SortableImage({
+  url,
+  index,
+  handleRemove,
+}: {
+  url: string;
+  index: number;
+  handleRemove: (index: number) => void;
+}) {
+  const {
+    attributes,
+    listeners,
+    setNodeRef,
+    transform,
+    transition,
+    isDragging,
+  } = useSortable({ id: url });
+
+  const style = {
+    transform: CSS.Transform.toString(transform),
+    transition,
+    zIndex: isDragging ? 1 : 0,
+  };
+
+  return (
+    <Paper
+      ref={setNodeRef}
+      style={style}
+      shadow={isDragging ? "lg" : "xs"}
+      radius="md"
+      w={160}
+      h={160}
+      pos="relative"
+      withBorder
+      className="cursor-grab overflow-hidden"
+      {...attributes}
+      {...listeners}
+    >
+      <ActionIcon
+        variant="filled"
+        color="red"
+        onClick={() => handleRemove(index)}
+        pos="absolute"
+        top={8}
+        right={8}
+        className="z-10"
+      >
+        <IconX size={16} />
+      </ActionIcon>
+
+      <Box h="100%" w="100%" pos="relative">
+        <Image
+          alt={`Preview ${index + 1}`}
+          src={url}
+          w="100%"
+          h="100%"
+          radius="md"
+          fit="contain"
+        />
+
+        <Box
+          pos="absolute"
+          inset={0}
+          className="flex items-center justify-center bg-black/30 opacity-0 hover:opacity-100 transition-opacity"
+        >
+          <IconGridDots size={24} color="white" />
+        </Box>
+      </Box>
+    </Paper>
+  );
+}
+
 export function ImageDropzone({
   multiple = true,
   handleSelect,
@@ -45,47 +135,29 @@ export function ImageDropzone({
   handleReorder,
   ...props
 }: ImageDropzoneProps) {
-  const previews = previewUrls
-    .filter((value) => value && value !== "")
-    .map((url, index) => (
-      <Draggable key={url} draggableId={url} index={index}>
-        {(provided, snapshot) => (
-          <Paper
-            shadow={snapshot.isDragging ? "lg" : "xs"}
-            ref={provided.innerRef}
-            {...provided.draggableProps}
-            className="relative group h-40 w-40 flex items-center justify-center"
-          >
-            <Group className="absolute top-2 right-2 z-10 opacity-0 group-hover:opacity-100 transition-opacity">
-              <ActionIcon
-                variant="filled"
-                color="dark"
-                {...provided.dragHandleProps}
-                size="sm"
-              >
-                <IconGripVertical size={16} />
-              </ActionIcon>
-              <ActionIcon
-                variant="filled"
-                color="red"
-                onClick={() => handleRemove(index)}
-                size="sm"
-              >
-                <IconX size={16} />
-              </ActionIcon>
-            </Group>
-            <Image
-              alt={`Preview ${index + 1}`}
-              src={url}
-              className="rounded-md object-cover"
-            />
-          </Paper>
-        )}
-      </Draggable>
-    ));
+  const sensors = useSensors(
+    useSensor(PointerSensor, {
+      activationConstraint: {
+        distance: 8, // Add a small activation distance to prevent accidental drags
+      },
+    }),
+    useSensor(KeyboardSensor)
+  );
+
+  const handleDragEnd = (event: DragEndEvent) => {
+    const { active, over } = event;
+
+    if (!over || !handleReorder) return;
+
+    if (active.id !== over.id) {
+      const oldIndex = previewUrls.indexOf(active.id as string);
+      const newIndex = previewUrls.indexOf(over.id as string);
+      handleReorder(oldIndex, newIndex);
+    }
+  };
 
   return (
-    <div className="space-y-4">
+    <Stack>
       <Dropzone
         maxSize={MAX_MB * 1024 ** 2}
         accept={IMAGE_MIME_TYPE}
@@ -149,31 +221,37 @@ export function ImageDropzone({
           )}
         </Group>
       </Dropzone>
-      {previews.length > 0 && (
-        <DragDropContext
-          onDragEnd={({ source, destination }) => {
-            if (!destination || !handleReorder) return;
-            handleReorder(source.index, destination.index);
-          }}
+      {previewUrls.length > 0 && (
+        <DndContext
+          sensors={sensors}
+          collisionDetection={closestCenter}
+          onDragEnd={handleDragEnd}
+          modifiers={[restrictToParentElement]} // Add this line
         >
-          <Droppable droppableId="image-previews" direction="horizontal">
-            {(provided) => (
-              <Flex
-                gap="md"
-                wrap="wrap"
-                justify="flex-start"
-                align="flex-start"
-                direction="row"
-                {...provided.droppableProps}
-                ref={provided.innerRef}
-              >
-                {previews}
-                {provided.placeholder}
-              </Flex>
-            )}
-          </Droppable>
-        </DragDropContext>
+          <SortableContext
+            items={previewUrls}
+            strategy={horizontalListSortingStrategy}
+          >
+            <Flex
+              gap="md"
+              wrap="wrap"
+              justify="flex-start"
+              align="flex-start"
+              direction="row"
+              style={{ position: "relative" }} // Add this to ensure proper constraint
+            >
+              {previewUrls.map((url, index) => (
+                <SortableImage
+                  key={url}
+                  url={url}
+                  index={index}
+                  handleRemove={handleRemove}
+                />
+              ))}
+            </Flex>
+          </SortableContext>
+        </DndContext>
       )}
-    </div>
+    </Stack>
   );
 }
