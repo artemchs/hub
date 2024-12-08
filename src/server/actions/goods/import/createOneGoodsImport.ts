@@ -46,7 +46,13 @@ export const createOneGoodsImport = async ({
 
     const mappedGoods = mapJsonToGoods(json, schemaData);
 
-    await uploadMappedGoodsToDb({ tx, mappedGoods });
+    await uploadMappedGoodsToDb({
+      tx,
+      mappedGoods,
+      createNewEntries: goodsImportSchema.createNewEntries,
+      updateExistingEntries: goodsImportSchema.updateExistingEntries,
+      nullifyMissingEntries: goodsImportSchema.nullifyMissingEntries,
+    });
 
     await tx.goodsImport.update({
       where: {

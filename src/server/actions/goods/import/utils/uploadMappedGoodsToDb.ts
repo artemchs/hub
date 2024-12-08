@@ -8,11 +8,26 @@ import { updateOneGood } from "../../updateOneGood";
 export const uploadMappedGoodsToDb = async ({
   tx,
   mappedGoods,
+  createNewEntries = false,
+  updateExistingEntries = false,
+  nullifyMissingEntries = false,
 }: {
   tx: PrismaTransaction;
   mappedGoods: MappedGood[];
+  createNewEntries: boolean;
+  updateExistingEntries: boolean;
+  nullifyMissingEntries: boolean;
 }) => {
   try {
+    if (!createNewEntries && !updateExistingEntries) {
+      throw new Error(
+        "No operations allowed - both create and update are disabled"
+      );
+    }
+
+    // Track processed goods IDs
+    const processedGoodIds = new Set<string>();
+
     for (const good of mappedGoods) {
       let price: Prisma.Decimal | undefined = good.price
         ? new Prisma.Decimal(good.price)
@@ -244,14 +259,29 @@ export const uploadMappedGoodsToDb = async ({
               characteristic: true,
             },
           },
-          internalFieldToGood: true,
+          internalFieldToGood: {
+            include: {
+              values: true,
+              field: true,
+            },
+          },
         },
       });
 
       if (!existingGood) {
+        if (!createNewEntries) {
+          console.log("Skipping creation - createNewEntries is false");
+          continue;
+        }
         const good = await createOneGood({ tx, payload });
+        processedGoodIds.add(good.id);
         console.log("Successfully created good: ", good.id);
       } else {
+        if (!updateExistingEntries) {
+          console.log("Skipping update - updateExistingEntries is false");
+          continue;
+        }
+
         // Preserve existing IDs that aren't in the new payload
         const existingIdValueIds = existingGood.idValues.map((v) => v.id);
         const combinedIdValueIds = [
@@ -306,8 +336,24 @@ export const uploadMappedGoodsToDb = async ({
             internalFields: combinedInternalFields,
           },
         });
+        processedGoodIds.add(existingGood.id);
         console.log("Successfully updated good: ", existingGood.id);
       }
+    }
+
+    // Handle nullifyMissingEntries
+    if (nullifyMissingEntries) {
+      const result = await tx.good.updateMany({
+        where: {
+          id: {
+            notIn: Array.from(processedGoodIds),
+          },
+        },
+        data: {
+          quantity: 0,
+        },
+      });
+      console.log(`Set quantity to 0 for ${result.count} missing goods`);
     }
   } catch (error) {
     console.error(error);

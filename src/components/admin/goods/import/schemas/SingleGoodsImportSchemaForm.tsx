@@ -1,6 +1,7 @@
 import {
   ActionIcon,
   Button,
+  Checkbox,
   Group,
   Paper,
   Stack,
@@ -60,6 +61,9 @@ export function SingleGoodsImportSchemaForm({
         characteristics: [],
         ids: [],
         internalFields: [],
+        createNewEntries: false,
+        updateExistingEntries: false,
+        nullifyMissingEntries: false,
       },
     },
     validate: zodResolver(
@@ -91,6 +95,27 @@ export function SingleGoodsImportSchemaForm({
           label="Название схемы"
           key={form.key("name")}
           {...form.getInputProps("name")}
+        />
+        <Checkbox
+          label="Создавать новые записи"
+          key={form.key("schema.createNewEntries")}
+          {...form.getInputProps("schema.createNewEntries", {
+            type: "checkbox",
+          })}
+        />
+        <Checkbox
+          label="Обновлять существующие записи"
+          key={form.key("schema.updateExistingEntries")}
+          {...form.getInputProps("schema.updateExistingEntries", {
+            type: "checkbox",
+          })}
+        />
+        <Checkbox
+          label="Обнулять отсутствующие записи"
+          key={form.key("schema.nullifyMissingEntries")}
+          {...form.getInputProps("schema.nullifyMissingEntries", {
+            type: "checkbox",
+          })}
         />
       </FormSection>
       <FormSection title="Медиа">

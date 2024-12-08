@@ -17,6 +17,8 @@ export const updateOneGoodsImportSchema = async ({
     },
     data: {
       name: payload.name,
+      createNewEntries: payload.createNewEntries,
+      updateExistingEntries: payload.updateExistingEntries,
       schema: payload.schema,
     },
   });

@@ -11,6 +11,9 @@ export const createOneGoodsImportSchema = async ({
   return tx.goodsImportSchema.create({
     data: {
       name: payload.name,
+      createNewEntries: payload.createNewEntries,
+      updateExistingEntries: payload.updateExistingEntries,
+      nullifyMissingEntries: payload.nullifyMissingEntries,
       schema: payload.schema,
     },
   });

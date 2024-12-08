@@ -2,6 +2,9 @@ import { z } from "zod";
 
 export const createOneGoodsImportSchemaSchema = z.object({
   name: z.string().min(1),
+  createNewEntries: z.boolean().default(false),
+  updateExistingEntries: z.boolean().default(false),
+  nullifyMissingEntries: z.boolean().default(false),
   schema: z.object({
     name: z.string().optional(),
     sku: z.string().optional(),

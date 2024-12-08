@@ -285,9 +285,12 @@ model GoodsImportSchema {
     createdAt DateTime @default(now())
     updatedAt DateTime @updatedAt
 
-    name    String
-    schema  Json
-    imports GoodsImport[]
+    name                  String
+    schema                Json
+    createNewEntries      Boolean
+    updateExistingEntries Boolean
+    nullifyMissingEntries Boolean
+    imports               GoodsImport[]
 }
 
 model GoodsExport {
