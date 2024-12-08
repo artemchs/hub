@@ -22,7 +22,9 @@ export const goodsExportSchemasColumns = [
     id: "export-link",
     Cell: ({ row }) => {
       return (
-        <CopyButton value={`${env.NEXTAUTH_URL}/api/export/${row.original.id}`}>
+        <CopyButton
+          value={`${env.NEXT_PUBLIC_URL}/api/export/${row.original.id}`}
+        >
           {({ copied, copy }) => (
             <Button
               leftSection={

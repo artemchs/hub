@@ -36,7 +36,8 @@ export const env = createEnv({
    * `NEXT_PUBLIC_`.
    */
   client: {
-    NEXT_PUBLIC_CLOUDFRONT_HOSTNAME: z.string()
+    NEXT_PUBLIC_CLOUDFRONT_HOSTNAME: z.string(),
+    NEXT_PUBLIC_URL: z.string().url(),
   },
 
   /**
@@ -54,7 +55,9 @@ export const env = createEnv({
     AWS_SECRET_ACCESS_KEY: process.env.AWS_SECRET_ACCESS_KEY,
     S3_BUCKET: process.env.S3_BUCKET,
     S3_REGION: process.env.S3_REGION,
-    NEXT_PUBLIC_CLOUDFRONT_HOSTNAME: process.env.NEXT_PUBLIC_CLOUDFRONT_HOSTNAME
+    NEXT_PUBLIC_CLOUDFRONT_HOSTNAME:
+      process.env.NEXT_PUBLIC_CLOUDFRONT_HOSTNAME,
+    NEXT_PUBLIC_URL: process.env.NEXT_PUBLIC_URL,
   },
   /**
    * Run `build` or `dev` with `SKIP_ENV_VALIDATION` to skip env validation. This is especially

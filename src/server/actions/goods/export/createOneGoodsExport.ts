@@ -4,6 +4,7 @@ import { type CreateOneGoodsExportInput } from "~/utils/validation/goods/export/
 import { buildRozetkaXml } from "./utils/xml-rozetka/buildXml";
 import { uploadObject } from "~/server/utils/storage/upload-object";
 import { readOneGoodsExportSchema } from "./schemas/readOneGoodsExportSchema";
+import { buildRozetkaXlsx } from "./utils/xlsx-rozetka/buildXlsx";
 
 export const createOneGoodsExport = async ({
   tx,
@@ -78,6 +79,20 @@ export const createOneGoodsExport = async ({
 
         await uploadObject(storage, {
           Body: Buffer.from(String(xml), "utf-8"),
+          Key: fileKey,
+        });
+
+        break;
+      case "XLSX_ROZETKA":
+        const xlsx = await buildRozetkaXlsx({
+          tx,
+          payload: { goods, schemaId: schema.id },
+        });
+
+        fileKey = `Export/${goodsExportId}.xlsx`;
+
+        await uploadObject(storage, {
+          Body: xlsx,
           Key: fileKey,
         });
 

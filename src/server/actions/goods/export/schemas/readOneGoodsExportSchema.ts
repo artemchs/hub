@@ -15,6 +15,10 @@ export const readOneGoodsExportSchema = async ({
         include: { identifier: true },
         orderBy: { index: "asc" },
       },
+      internalFields: {
+        include: { internalField: true },
+        orderBy: { columnName: "asc" },
+      },
     },
   });
 

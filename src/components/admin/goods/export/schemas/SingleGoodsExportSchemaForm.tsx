@@ -12,6 +12,7 @@ import { IconGripVertical, IconTrash } from "@tabler/icons-react";
 import Link from "next/link";
 import { useEffect } from "react";
 import { GoodsIdCombobox } from "~/components/admin/goods-ids/GoodsIdCombobox";
+import { GoodsInternalFieldCombobox } from "~/components/admin/goods-internal-fields/GoodsInternalFieldCombobox";
 import { DraggableItems } from "~/components/DraggableItems";
 import { FormSection } from "~/components/FormSection";
 import {
@@ -33,7 +34,13 @@ interface SingleGoodsExportSchemaFormProps {
   mode: "create" | "update";
 }
 
-const SELECT_DATA = [{ value: "XML_ROZETKA", label: "XML для Rozetka" }];
+const SELECT_DATA = [
+  { value: "XML_ROZETKA", label: "XML для Rozetka" },
+  {
+    value: "XLSX_ROZETKA",
+    label: "XLSX для Rozetka",
+  },
+];
 
 export function SingleGoodsExportSchemaForm({
   initialValues,
@@ -48,6 +55,7 @@ export function SingleGoodsExportSchemaForm({
       name: "",
       identifierIds: [],
       template: "XML_ROZETKA",
+      internalFields: [],
     },
     validate: zodResolver(
       mode === "create"
@@ -146,6 +154,71 @@ export function SingleGoodsExportSchemaForm({
           )}
         />
       </FormSection>
+
+      {form.values.template.startsWith("XLSX") && (
+        <FormSection
+          title="Внутренние поля"
+          topLeftChildren={
+            <Button
+              variant="subtle"
+              onClick={() =>
+                form.setFieldValue("internalFields", [
+                  ...(form.values.internalFields ?? []),
+                  { id: "", columnName: "" },
+                ])
+              }
+            >
+              Добавить внутреннее поле
+            </Button>
+          }
+        >
+          <Stack>
+            {form.values.internalFields?.map((internalField, index) => (
+              <Group gap="md" align="start" key={index}>
+                <Stack justify="space-between" gap="xs">
+                  <ActionIcon
+                    variant="transparent"
+                    color="red"
+                    size="xs"
+                    onClick={() =>
+                      form.setFieldValue(
+                        "internalFields",
+                        form.values.internalFields?.filter(
+                          (_, i) => i !== index
+                        )
+                      )
+                    }
+                  >
+                    <IconTrash size={16} />
+                  </ActionIcon>
+                </Stack>
+                <Box className="flex-1 flex flex-col gap-2">
+                  <GoodsInternalFieldCombobox
+                    label="Внутреннее поле"
+                    id={internalField.id}
+                    setId={(id) => {
+                      form.setFieldValue(`internalFields.${index}.id`, id);
+                      form.setFieldValue(
+                        `internalFields.${index}.columnName`,
+                        ""
+                      );
+                    }}
+                  />
+                  <TextInput
+                    withAsterisk
+                    label="Название колонки"
+                    key={form.key(`internalFields.${index}.columnName`)}
+                    {...form.getInputProps(
+                      `internalFields.${index}.columnName`
+                    )}
+                  />
+                </Box>
+              </Group>
+            ))}
+          </Stack>
+        </FormSection>
+      )}
+
       <Group justify="flex-end" mt="md">
         <Button
           variant="subtle"

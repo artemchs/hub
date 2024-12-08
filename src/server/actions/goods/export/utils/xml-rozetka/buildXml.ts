@@ -4,44 +4,10 @@ import { env } from "~/env";
 import { type PrismaTransaction } from "~/server/db";
 import { findBestIdentifier } from "../findBestIdentifier";
 import type { RozetkaOffer } from "./types";
-
-type Goods = Prisma.GoodGetPayload<{
-  include: {
-    category: {
-      select: { name: true };
-    };
-    mediaToGood: {
-      include: {
-        media: {
-          select: { key: true };
-        };
-      };
-    };
-    attributeToGood: {
-      include: {
-        attribute: {
-          select: { name: true };
-        };
-        value: {
-          select: { value: true };
-        };
-      };
-    };
-    characteristicToGood: {
-      include: {
-        characteristic: {
-          select: { name: true };
-        };
-        values: {
-          select: { value: true };
-        };
-      };
-    };
-  };
-}>[];
+import { ExportGoods } from "../types";
 
 async function buildOffers(
-  goods: Goods,
+  goods: ExportGoods,
   tx: PrismaTransaction,
   schemaId: string
 ): Promise<RozetkaOffer[]> {
@@ -85,7 +51,7 @@ export const buildRozetkaXml = async ({
 }: {
   tx: PrismaTransaction;
   payload: {
-    goods: Goods;
+    goods: ExportGoods;
     schemaId: string;
   };
 }) => {

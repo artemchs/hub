@@ -221,6 +221,7 @@ model GoodsInternalField {
     name                     String
     values                   GoodsInternalFieldValue[]
     GoodsInternalFieldToGood GoodsInternalFieldToGood[]
+    exportSchemas            GoodsExportSchemaToInternalField[]
 }
 
 model GoodsInternalFieldValue {
@@ -308,15 +309,17 @@ model GoodsExportSchema {
     createdAt DateTime @default(now())
     updatedAt DateTime @updatedAt
 
-    name        String
-    template    GoodsExportTemplate
-    exports     GoodsExport[]
-    identifiers GoodsExportSchemaToAdditionalId[]
-    jobs        GoodsExportJob[]
+    name           String
+    template       GoodsExportTemplate
+    exports        GoodsExport[]
+    identifiers    GoodsExportSchemaToAdditionalId[]
+    internalFields GoodsExportSchemaToInternalField[]
+    jobs           GoodsExportJob[]
 }
 
 enum GoodsExportTemplate {
     XML_ROZETKA
+    XLSX_ROZETKA
 }
 
 model GoodsExportSchemaToAdditionalId {
@@ -328,6 +331,17 @@ model GoodsExportSchemaToAdditionalId {
     index Int
 
     @@id([schemaId, identifierId])
+}
+
+model GoodsExportSchemaToInternalField {
+    schema          GoodsExportSchema  @relation(fields: [schemaId], references: [id], onDelete: Cascade)
+    schemaId        String
+    internalField   GoodsInternalField @relation(fields: [internalFieldId], references: [id], onDelete: Cascade)
+    internalFieldId String
+
+    columnName String
+
+    @@id([schemaId, internalFieldId])
 }
 
 model GoodsExportJob {
