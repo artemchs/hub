@@ -47,7 +47,7 @@ export function EditorInput(
         props.onChange(content as never);
       }
     },
-    immediatelyRender: true,
+    immediatelyRender: false,
   });
 
   // Add this effect to sync editor content with props.value

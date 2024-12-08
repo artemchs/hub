@@ -5,7 +5,7 @@ import { api } from "~/trpc/react";
 import { DisplayOneGoodsInternalFieldValue } from "./DisplayOneGoodsInternalFieldValue";
 import { CreateOneGoodsInternalFieldValueModal } from "./CreateOneGoodsInternalFieldValue";
 import { UpdateOneGoodsInternalFieldValueModal } from "./UpdateOneGoodsInternalFieldValue";
-import { DeleteOneGoodsInternalFieldValueModal } from "./DeleteOneGoodsInternalFieldValueModal";
+import { DeleteOneGoodsInternalFieldValueModal } from "./DeleteOneGoodsInternalFieldValue";
 
 interface GoodsInternalFieldValuesMultiselectProps {
   ids: string[];
@@ -41,9 +41,18 @@ export function GoodsInternalFieldValuesMultiselect({
       displayComponent={DisplayOneGoodsInternalFieldValue}
       useInfiniteQuery={useInternalFieldValues}
       getOptionLabel={(item) => item.value}
-      CreateOneModal={CreateOneGoodsInternalFieldValueModal}
-      UpdateOneModal={UpdateOneGoodsInternalFieldValueModal}
-      DeleteOneModal={DeleteOneGoodsInternalFieldValueModal}
+      CreateOneModal={{
+        Component: CreateOneGoodsInternalFieldValueModal,
+        onSuccess: async () => {},
+      }}
+      UpdateOneModal={{
+        Component: UpdateOneGoodsInternalFieldValueModal,
+        onSuccess: async () => {},
+      }}
+      DeleteOneModal={{
+        Component: DeleteOneGoodsInternalFieldValueModal,
+        onSuccess: async () => {},
+      }}
       disabled={disabled}
     />
   );

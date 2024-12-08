@@ -54,6 +54,13 @@ export function UpdateOneGood({ id }: { id: string }) {
             id: v.characteristicId,
             valueIds: v.values.map((v) => v.id),
           })) ?? [],
+        internalFields:
+          data?.internalFieldToGood
+            .filter((v) => v.fieldId !== null)
+            .map((v) => ({
+              id: v.fieldId as string,
+              valueIds: v.values.map((v) => v.id),
+            })) ?? [],
         idValueIds: data?.idValues.map((v) => v.id) ?? [],
         tagIds: data?.tags.map((v) => v.id) ?? [],
         mediaKeys: data?.mediaToGood.map((v) => v.media.key) ?? [],

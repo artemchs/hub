@@ -3,6 +3,10 @@
 import { api } from "~/trpc/react";
 import { DataCombobox } from "~/components/DataCombobox";
 import { DisplayOneGoodsInternalFieldName } from "./DisplayOneGoodsInternalFieldName";
+import { CreateOneGoodsInternalFieldModal } from "./CreateOneGoodsInternalField";
+import { UpdateOneGoodsInternalFieldModal } from "./UpdateOneGoodsInternalField";
+import { DeleteOneGoodsInternalFieldModal } from "./DeleteOneGoodsInternalField";
+import { useEffect } from "react";
 
 interface GoodsInternalFieldComboboxProps {
   id: string | null;
@@ -33,6 +37,18 @@ export function GoodsInternalFieldCombobox({
       displayComponent={DisplayOneGoodsInternalFieldName}
       useInfiniteQuery={useInternalFields}
       getOptionLabel={(item) => item.name}
+      CreateOneModal={{
+        Component: CreateOneGoodsInternalFieldModal,
+        onSuccess: async () => {},
+      }}
+      UpdateOneModal={{
+        Component: UpdateOneGoodsInternalFieldModal,
+        onSuccess: async () => {},
+      }}
+      DeleteOneModal={{
+        Component: DeleteOneGoodsInternalFieldModal,
+        onSuccess: async () => {},
+      }}
     />
   );
 }

@@ -21,6 +21,7 @@ import {
   Stack,
   Divider,
   Box,
+  Flex,
 } from "@mantine/core";
 import { useDebouncedState, useDisclosure } from "@mantine/hooks";
 import { IconPencil, IconPlus, IconTrash } from "@tabler/icons-react";
@@ -208,37 +209,35 @@ export function DataMultiSelect<T extends { id: string }>({
           </PillsInput>
         </Combobox.DropdownTarget>
 
-        <Combobox.Dropdown maw="250">
-          <Stack gap="sm">
-            <ScrollArea.Autosize type="scroll" mah={200}>
-              <Combobox.Options>
-                {isLoading ? (
-                  <Combobox.Empty>Загрузка...</Combobox.Empty>
-                ) : isError ? (
-                  <Combobox.Empty>Ошибка загрузки</Combobox.Empty>
-                ) : options && options.length > 0 ? (
-                  options
-                ) : (
-                  <Combobox.Empty>Нет результатов</Combobox.Empty>
-                )}
-              </Combobox.Options>
-            </ScrollArea.Autosize>
-            {CreateOneModal && (
-              <Button
-                type="button"
-                leftSection={<IconPlus size={16} />}
-                variant="subtle"
-                size="sm"
-                fullWidth
-                onClick={() => {
-                  openCreateOneModal();
-                  combobox.closeDropdown();
-                }}
-              >
-                Создать
-              </Button>
-            )}
-          </Stack>
+        <Combobox.Dropdown>
+          <ScrollArea.Autosize type="scroll" mah={200} w="100%">
+            <Combobox.Options>
+              {isLoading ? (
+                <Combobox.Empty>Загрузка...</Combobox.Empty>
+              ) : isError ? (
+                <Combobox.Empty>Ошибка загрузки</Combobox.Empty>
+              ) : options && options.length > 0 ? (
+                options
+              ) : (
+                <Combobox.Empty>Нет результатов</Combobox.Empty>
+              )}
+            </Combobox.Options>
+          </ScrollArea.Autosize>
+          {CreateOneModal && (
+            <Button
+              type="button"
+              leftSection={<IconPlus size={16} />}
+              variant="white"
+              size="xs"
+              fullWidth
+              onClick={() => {
+                openCreateOneModal();
+                combobox.closeDropdown();
+              }}
+            >
+              Создать
+            </Button>
+          )}
         </Combobox.Dropdown>
       </Combobox>
 

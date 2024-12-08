@@ -357,7 +357,7 @@ export function SingleGoodForm({
               variant="subtle"
               onClick={() =>
                 form.setFieldValue("internalFields", [
-                  ...(form.values.characteristics ?? []),
+                  ...(form.values.internalFields ?? []),
                   { id: "", valueIds: [] },
                 ])
               }
@@ -407,6 +407,7 @@ export function SingleGoodForm({
                         ids
                       )
                     }
+                    parentId={internalField.id}
                     disabled={!internalField.id}
                   />
                 </Box>

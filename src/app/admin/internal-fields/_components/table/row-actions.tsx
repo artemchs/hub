@@ -4,7 +4,7 @@ import { ActionIcon, Group } from "@mantine/core";
 import { useDisclosure } from "@mantine/hooks";
 import { IconPencil, IconTrash } from "@tabler/icons-react";
 import Link from "next/link";
-import { DeleteOneGoodsInternalFieldModal } from "~/components/admin/goods-internal-fields/DeleteOneGoodsInternalFieldModal";
+import { DeleteOneGoodsInternalFieldModal } from "~/components/admin/goods-internal-fields/DeleteOneGoodsInternalField";
 
 export function GoodsInternalFieldsTableRowActions({ id }: { id: string }) {
   const [opened, { open, close }] = useDisclosure(false);
@@ -25,7 +25,12 @@ export function GoodsInternalFieldsTableRowActions({ id }: { id: string }) {
           <IconTrash size={16} />
         </ActionIcon>
       </Group>
-      <DeleteOneGoodsInternalFieldModal close={close} id={id} opened={opened} />
+      <DeleteOneGoodsInternalFieldModal
+        onSuccess={async () => {}}
+        close={close}
+        id={id}
+        opened={opened}
+      />
     </>
   );
 }

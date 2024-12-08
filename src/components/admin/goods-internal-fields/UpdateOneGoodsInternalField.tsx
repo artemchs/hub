@@ -1,30 +1,37 @@
 "use client";
 
+import { Modal } from "@mantine/core";
 import { api } from "~/trpc/react";
-import { useRouter } from "next/navigation";
-import { type CreateOneInternalFieldInput } from "~/utils/validation/internal-fields/createOneInternalField";
-import { type UpdateOneInternalFieldInput } from "~/utils/validation/internal-fields/updateOneInternalField";
 import { SingleGoodsInternalFieldForm } from "./SingleGoodsInternalFieldForm";
+import { FormProps } from "~/types/forms";
+import { ModalProps } from "~/types/modals";
+import { UpdateOneInternalFieldInput } from "~/utils/validation/internal-fields/updateOneInternalField";
 
-export function UpdateOneGoodsInternalField({ id }: { id: string }) {
+export function UpdateOneGoodsInternalField({
+  close,
+  onSuccess,
+  id,
+}: FormProps & { id: string }) {
   const apiUtils = api.useUtils();
-  const router = useRouter();
 
-  const { data, isFetching } = api.internalFields.readOne.useQuery({ id });
+  const { data, isFetching } = api.internalFields.readOne.useQuery({
+    id,
+  });
 
   const { mutate, isPending } = api.internalFields.updateOne.useMutation({
     async onSuccess() {
       await Promise.all([
         apiUtils.internalFields.readMany.invalidate(),
+        apiUtils.internalFields.readManyInfinite.invalidate(),
         apiUtils.internalFields.readOne.invalidate({ id }),
       ]);
-      router.push("/admin/internal-fields");
+      if (onSuccess) {
+        onSuccess();
+      }
     },
   });
 
-  const handleSubmit = (
-    values: CreateOneInternalFieldInput | UpdateOneInternalFieldInput
-  ) => {
+  const handleSubmit = (values: UpdateOneInternalFieldInput) => {
     mutate({
       id,
       name: values.name,
@@ -34,10 +41,31 @@ export function UpdateOneGoodsInternalField({ id }: { id: string }) {
   return (
     <SingleGoodsInternalFieldForm
       mode="update"
-      initialValues={data}
+      initialValues={{
+        id,
+        name: data?.name ?? "",
+      }}
       onSubmit={handleSubmit}
       isPending={isPending}
       isFetching={isFetching}
+      close={close}
     />
+  );
+}
+
+export function UpdateOneGoodsInternalFieldModal({
+  close,
+  opened,
+  onSuccess,
+  id,
+}: ModalProps & { id: string }) {
+  return (
+    <Modal opened={opened ?? false} onClose={close} title="Изменить поле">
+      <UpdateOneGoodsInternalField
+        close={close}
+        onSuccess={onSuccess}
+        id={id}
+      />
+    </Modal>
   );
 }

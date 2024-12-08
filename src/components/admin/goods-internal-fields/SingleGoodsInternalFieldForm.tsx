@@ -1,6 +1,5 @@
 import { Button, Group, TextInput } from "@mantine/core";
 import { useForm, zodResolver } from "@mantine/form";
-import Link from "next/link";
 import { useEffect } from "react";
 import { createOneInternalFieldSchema } from "~/utils/validation/internal-fields/createOneInternalField";
 import {
@@ -14,6 +13,7 @@ interface SingleGoodsInternalFieldFormProps {
   isPending?: boolean;
   isFetching?: boolean;
   mode: "create" | "update";
+  close: () => void; // Add this
 }
 
 export function SingleGoodsInternalFieldForm({
@@ -56,7 +56,7 @@ export function SingleGoodsInternalFieldForm({
         {...form.getInputProps("name")}
       />
       <Group justify="flex-end" mt="md">
-        <Button variant="subtle" component={Link} href="/admin/internal-fields">
+        <Button variant="subtle" onClick={close}>
           Отменить
         </Button>
         <Button type="submit" loading={isPending}>

@@ -1,11 +1,19 @@
+"use client";
+
+import { useParams, useRouter } from "next/navigation";
 import { UpdateOneGoodsInternalField } from "~/components/admin/goods-internal-fields/UpdateOneGoodsInternalField";
 
-export default async function Page({
-  params,
-}: {
-  params: Promise<{ id: string }>;
-}) {
-  const id = (await params).id;
+export default function Page() {
+  const router = useRouter();
+  const params = useParams<{ id: string }>();
 
-  return <UpdateOneGoodsInternalField id={id} />;
+  const close = () => router.push("/admin/internal-fields");
+
+  return (
+    <UpdateOneGoodsInternalField
+      close={close}
+      onSuccess={async () => close()}
+      id={params.id}
+    />
+  );
 }

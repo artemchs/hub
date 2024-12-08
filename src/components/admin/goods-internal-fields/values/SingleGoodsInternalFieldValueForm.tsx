@@ -49,6 +49,10 @@ export function SingleGoodsInternalFieldValueForm({
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [initialValues]);
 
+  useEffect(() => {
+    console.log("parentId", form.values.parentId);
+  }, [form.values.parentId]);
+
   return (
     <form
       onSubmit={(e) => {
