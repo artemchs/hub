@@ -3,9 +3,6 @@
 import { DataMultiSelect } from "~/components/DataMultiselect";
 import { api } from "~/trpc/react";
 import { DisplayOneGoodsAttributeValue } from "./DisplayOneGoodsAttributeValue";
-import { CreateOneGoodsAttributeValueModal } from "./CreateOneGoodsAttributeValue";
-import { UpdateOneGoodsAttributeValueModal } from "./UpdateOneGoodsAttributeValue";
-import { DeleteOneGoodsAttributeValueModal } from "./DeleteOneGoodsAttributeValue";
 
 interface GoodsAttributeValuesMultiselectProps {
   ids: string[];
@@ -39,9 +36,6 @@ export function GoodsAttributeValuesMultiselect({
       displayComponent={DisplayOneGoodsAttributeValue}
       useInfiniteQuery={useAttributeValues}
       getOptionLabel={(item) => item.value}
-      CreateOneModal={CreateOneGoodsAttributeValueModal}
-      UpdateOneModal={UpdateOneGoodsAttributeValueModal}
-      DeleteOneModal={DeleteOneGoodsAttributeValueModal}
     />
   );
 }

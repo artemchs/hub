@@ -10,8 +10,9 @@ import {
   updateOneCharacteristicValueSchema,
 } from "~/utils/validation/characteristics/values/updateOneCharacteristicValue";
 import { GoodsCharacteristicCombobox } from "../GoodsCharacteristicCombobox";
+import { FormProps } from "~/types/forms";
 
-interface SingleGoodsCharacteristicValueFormProps {
+interface SingleGoodsCharacteristicValueFormProps extends FormProps {
   initialValues?: UpdateOneCharacteristicValueInput;
   onSubmit: (
     values:
@@ -21,7 +22,6 @@ interface SingleGoodsCharacteristicValueFormProps {
   isPending?: boolean;
   isFetching?: boolean;
   mode: "create" | "update";
-  close: () => void;
 }
 
 export function SingleGoodsCharacteristicValueForm({

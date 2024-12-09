@@ -1,42 +1,38 @@
-import { Button, Group, TextInput } from "@mantine/core";
 import { useForm, zodResolver } from "@mantine/form";
-import Link from "next/link";
 import { useEffect } from "react";
-import {
-  type UpdateOneCharacteristicInput,
-  updateOneCharacteristicSchema,
-} from "~/utils/validation/characteristics/updateOneCharacteristic";
-import {
-  type CreateOneCharacteristicInput,
-  createOneCharacteristicSchema,
-} from "~/utils/validation/characteristics/createOneCharacteristic";
 import { FormProps } from "~/types/forms";
+import {
+  CreateOneIdValueInput,
+  createOneIdValueSchema,
+} from "~/utils/validation/ids/values/createOneIdValue";
+import {
+  UpdateOneIdValueInput,
+  updateOneIdValueSchema,
+} from "~/utils/validation/ids/values/updateOneIdValue";
+import { GoodsIdCombobox } from "../GoodsIdCombobox";
+import { Button, Group, TextInput } from "@mantine/core";
 
-interface SingleGoodsCharacteristicFormProps extends FormProps {
-  initialValues?: UpdateOneCharacteristicInput;
-  onSubmit: (
-    values: CreateOneCharacteristicInput | UpdateOneCharacteristicInput
-  ) => void;
+interface SingleGoodsIdValueFormProps extends FormProps {
+  initialValues?: UpdateOneIdValueInput;
+  onSubmit: (values: CreateOneIdValueInput | UpdateOneIdValueInput) => void;
   isPending?: boolean;
   isFetching?: boolean;
   mode: "create" | "update";
 }
 
-export function SingleGoodsCharacteristicForm({
+export function SingleGoodsIdValueForm({
   initialValues,
   onSubmit,
   isPending,
   isFetching,
   mode,
   close,
-}: SingleGoodsCharacteristicFormProps) {
+}: SingleGoodsIdValueFormProps) {
   const form = useForm({
     mode: "controlled",
-    initialValues: initialValues ?? { name: "" },
+    initialValues: initialValues ?? { value: "", parentId: "" },
     validate: zodResolver(
-      mode === "create"
-        ? createOneCharacteristicSchema
-        : updateOneCharacteristicSchema
+      mode === "create" ? createOneIdValueSchema : updateOneIdValueSchema
     ),
   });
 
@@ -56,11 +52,16 @@ export function SingleGoodsCharacteristicForm({
       }}
       className="flex flex-col gap-4"
     >
+      <GoodsIdCombobox
+        id={form.values.parentId}
+        setId={(id) => form.setFieldValue("parentId", id!)}
+        label="Идентификатор"
+      />
       <TextInput
         withAsterisk
-        label="Название"
-        key={form.key("name")}
-        {...form.getInputProps("name")}
+        label="Значение"
+        key={form.key("value")}
+        {...form.getInputProps("value")}
       />
       <Group justify="flex-end" mt="md">
         <Button variant="subtle" onClick={close}>

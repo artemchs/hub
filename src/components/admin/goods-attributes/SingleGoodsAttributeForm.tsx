@@ -1,7 +1,7 @@
 import { Button, Group, TextInput } from "@mantine/core";
 import { useForm, zodResolver } from "@mantine/form";
-import Link from "next/link";
 import { useEffect } from "react";
+import { FormProps } from "~/types/forms";
 import {
   type CreateOneAttributeInput,
   createOneAttributeSchema,
@@ -11,7 +11,7 @@ import {
   updateOneAttributeSchema,
 } from "~/utils/validation/attributes/updateOneAttribute";
 
-interface SingleGoodsAttributeFormProps {
+interface SingleGoodsAttributeFormProps extends FormProps {
   initialValues?: UpdateOneAttributeInput;
   onSubmit: (values: CreateOneAttributeInput | UpdateOneAttributeInput) => void;
   isPending?: boolean;
@@ -25,6 +25,7 @@ export function SingleGoodsAttributeForm({
   isPending,
   isFetching,
   mode,
+  close,
 }: SingleGoodsAttributeFormProps) {
   const form = useForm({
     mode: "controlled",
@@ -57,7 +58,7 @@ export function SingleGoodsAttributeForm({
         {...form.getInputProps("name")}
       />
       <Group justify="flex-end" mt="md">
-        <Button variant="subtle" component={Link} href="/admin/attributes">
+        <Button variant="subtle" onClick={close}>
           Отменить
         </Button>
         <Button type="submit" loading={isPending}>

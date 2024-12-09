@@ -41,9 +41,18 @@ export function GoodsCharacteristicValuesMultiselect({
       displayComponent={DisplayOneGoodsCharacteristicValue}
       useInfiniteQuery={useCharacteristicValues}
       getOptionLabel={(item) => item.value}
-      CreateOneModal={CreateOneGoodsCharacteristicValueModal}
-      UpdateOneModal={UpdateOneGoodsCharacteristicValueModal}
-      DeleteOneModal={DeleteOneGoodsCharacteristicValueModal}
+      CreateOneModal={{
+        Component: CreateOneGoodsCharacteristicValueModal,
+        onSuccess: async () => {},
+      }}
+      UpdateOneModal={{
+        Component: UpdateOneGoodsCharacteristicValueModal,
+        onSuccess: async () => {},
+      }}
+      DeleteOneModal={{
+        Component: DeleteOneGoodsCharacteristicValueModal,
+        onSuccess: async () => {},
+      }}
       disabled={disabled}
     />
   );

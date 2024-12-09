@@ -3,26 +3,30 @@
 import { Box, Button, Modal, Text } from "@mantine/core";
 import { IconTrash } from "@tabler/icons-react";
 import { api } from "~/trpc/react";
+import { ModalProps } from "~/types/modals";
 
-export function DeleteGoodsIdModal({
+export function DeleteGoodsId({
   id,
-  opened,
   close,
-}: {
-  id: string;
-  opened: boolean;
-  close: () => void;
-}) {
+  opened,
+  onSuccess,
+}: { id: string } & ModalProps) {
   const apiUtils = api.useUtils();
 
   const { mutate, isPending } = api.ids.deleteOne.useMutation({
     async onSuccess() {
-      await apiUtils.ids.readMany.invalidate();
+      await Promise.all([
+        apiUtils.ids.readManyInfinite.invalidate(),
+        apiUtils.ids.readMany.invalidate(),
+      ]);
+      if (onSuccess) {
+        onSuccess();
+      }
     },
   });
 
   return (
-    <Modal opened={opened} onClose={close} title="Удалить идентификатор">
+    <>
       <Text>Вы уверены что хотите удалить этот идентификатор?</Text>
       <Box className="flex flex-col gap-2 lg:flex-row-reverse mt-8">
         <Button
@@ -41,6 +45,23 @@ export function DeleteGoodsIdModal({
           Отмена
         </Button>
       </Box>
+    </>
+  );
+}
+
+export function DeleteGoodsIdModal({
+  id,
+  close,
+  opened,
+  onSuccess,
+}: { id: string } & ModalProps) {
+  return (
+    <Modal
+      opened={opened ?? false}
+      onClose={close}
+      title="Удалить идентификатор"
+    >
+      <DeleteGoodsId id={id} close={close} onSuccess={onSuccess} />
     </Modal>
   );
 }

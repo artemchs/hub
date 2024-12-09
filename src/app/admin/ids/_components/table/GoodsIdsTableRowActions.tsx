@@ -4,7 +4,7 @@ import { ActionIcon, Group } from "@mantine/core";
 import { IconPencil, IconTrash } from "@tabler/icons-react";
 import Link from "next/link";
 import { useDisclosure } from "@mantine/hooks";
-import { DeleteGoodsIdModal } from "~/components/admin/goods-ids/DeleteGoodsIdModal";
+import { DeleteGoodsIdModal } from "~/components/admin/goods-ids/DeleteGoodsId";
 
 export function GoodsIdsTableRowActions({ id }: { id: string }) {
   const [opened, { open, close }] = useDisclosure(false);
@@ -25,7 +25,12 @@ export function GoodsIdsTableRowActions({ id }: { id: string }) {
           <IconTrash size={16} />
         </ActionIcon>
       </Group>
-      <DeleteGoodsIdModal close={close} id={id} opened={opened} />
+      <DeleteGoodsIdModal
+        close={close}
+        id={id}
+        opened={opened}
+        onSuccess={async () => {}}
+      />
     </>
   );
 }

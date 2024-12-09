@@ -15,6 +15,7 @@ export const readManyIdValuesInfinite = async ({
         contains: payload.globalFilter,
         mode: "insensitive",
       },
+      goodsIdId: payload.parentId ? { equals: payload.parentId } : undefined,
     },
     cursor: payload.cursor ? { id: payload.cursor } : undefined,
     orderBy: {

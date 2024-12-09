@@ -5,10 +5,16 @@ import { GoodsIdForm } from "./GoodsIdForm";
 import { type CreateOneIdInput } from "~/utils/validation/ids/createOneId";
 import { type UpdateOneIdInput } from "~/utils/validation/ids/updateOneId";
 import { useRouter } from "next/navigation";
+import { FormProps } from "~/types/forms";
+import { ModalProps } from "~/types/modals";
+import { Modal } from "@mantine/core";
 
-export function UpdateGoodsId({ id }: { id: string }) {
+export function UpdateGoodsId({
+  id,
+  close,
+  onSuccess,
+}: { id: string } & FormProps) {
   const apiUtils = api.useUtils();
-  const router = useRouter();
 
   const { data, isFetching } = api.ids.readOne.useQuery({ id });
 
@@ -16,9 +22,12 @@ export function UpdateGoodsId({ id }: { id: string }) {
     async onSuccess() {
       await Promise.all([
         apiUtils.ids.readMany.invalidate(),
+        apiUtils.ids.readManyInfinite.invalidate(),
         apiUtils.ids.readOne.invalidate({ id }),
       ]);
-      router.push("/admin/ids");
+      if (onSuccess) {
+        onSuccess();
+      }
     },
   });
 
@@ -36,6 +45,24 @@ export function UpdateGoodsId({ id }: { id: string }) {
       onSubmit={handleSubmit}
       isPending={isPending}
       isFetching={isFetching}
+      close={close}
     />
+  );
+}
+
+export function UpdateGoodsIdModal({
+  id,
+  close,
+  opened,
+  onSuccess,
+}: { id: string } & ModalProps) {
+  return (
+    <Modal
+      opened={opened ?? false}
+      onClose={close}
+      title="Изменить идентификатор товара"
+    >
+      <UpdateGoodsId id={id} close={close} onSuccess={onSuccess} />
+    </Modal>
   );
 }

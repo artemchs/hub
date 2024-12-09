@@ -1,4 +1,3 @@
-// UpdateOneGoodsAttributeValue.tsx
 "use client";
 
 import { Modal } from "@mantine/core";
@@ -6,16 +5,14 @@ import { api } from "~/trpc/react";
 import { type CreateOneAttributeValueInput } from "~/utils/validation/attributes/values/createOneAttributeValue";
 import { type UpdateOneAttributeValueInput } from "~/utils/validation/attributes/values/updateOneAttributeValue";
 import { SingleGoodsAttributeValueForm } from "./SingleGoodsAttributeValueForm";
+import { FormProps } from "~/types/forms";
+import { ModalProps } from "~/types/modals";
 
-export function UpdateOneGoodsAttributeValueModal({
+export function UpdateOneGoodsAttributeValue({
   id,
-  opened,
   close,
-}: {
-  id: string;
-  opened: boolean;
-  close: () => void;
-}) {
+  onSuccess,
+}: { id: string } & FormProps) {
   const apiUtils = api.useUtils();
 
   const { data, isFetching } = api.attributes.values.readOne.useQuery({ id });
@@ -26,7 +23,9 @@ export function UpdateOneGoodsAttributeValueModal({
         apiUtils.attributes.values.readManyInfinite.invalidate(),
         apiUtils.attributes.values.readOne.invalidate({ id }),
       ]);
-      close();
+      if (onSuccess) {
+        onSuccess();
+      }
     },
   });
 
@@ -41,18 +40,37 @@ export function UpdateOneGoodsAttributeValueModal({
   };
 
   return (
-    <Modal opened={opened} onClose={close} title="Изменить значение атрибута">
-      <SingleGoodsAttributeValueForm
-        mode="update"
-        initialValues={{
-          id,
-          parentId: data?.attributeId ?? "",
-          value: data?.value ?? "",
-        }}
-        onSubmit={handleSubmit}
-        isPending={isPending}
-        isFetching={isFetching}
+    <SingleGoodsAttributeValueForm
+      mode="update"
+      initialValues={{
+        id,
+        parentId: data?.attributeId ?? "",
+        value: data?.value ?? "",
+      }}
+      onSubmit={handleSubmit}
+      isPending={isPending}
+      isFetching={isFetching}
+      close={close}
+    />
+  );
+}
+
+export function UpdateOneGoodsAttributeValueModal({
+  id,
+  close,
+  opened,
+  onSuccess,
+}: { id: string } & ModalProps) {
+  return (
+    <Modal
+      opened={opened ?? false}
+      onClose={close}
+      title="Изменить значение атрибута товара"
+    >
+      <UpdateOneGoodsAttributeValue
+        id={id}
         close={close}
+        onSuccess={onSuccess}
       />
     </Modal>
   );

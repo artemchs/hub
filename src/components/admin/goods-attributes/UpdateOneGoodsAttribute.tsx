@@ -5,10 +5,16 @@ import { api } from "~/trpc/react";
 import { type CreateOneAttributeInput } from "~/utils/validation/attributes/createOneAttribute";
 import { type UpdateOneAttributeInput } from "~/utils/validation/attributes/updateOneAttribute";
 import { SingleGoodsAttributeForm } from "./SingleGoodsAttributeForm";
+import { FormProps } from "~/types/forms";
+import { Modal } from "@mantine/core";
+import { ModalProps } from "~/types/modals";
 
-export function UpdateOneGoodsAttribute({ id }: { id: string }) {
+export function UpdateOneGoodsAttribute({
+  id,
+  close,
+  onSuccess,
+}: { id: string } & FormProps) {
   const apiUtils = api.useUtils();
-  const router = useRouter();
 
   const { data, isFetching } = api.attributes.readOne.useQuery({ id });
 
@@ -16,9 +22,12 @@ export function UpdateOneGoodsAttribute({ id }: { id: string }) {
     async onSuccess() {
       await Promise.all([
         apiUtils.attributes.readMany.invalidate(),
+        apiUtils.attributes.readManyInfinite.invalidate(),
         apiUtils.attributes.readOne.invalidate({ id }),
       ]);
-      router.push("/admin/attributes");
+      if (onSuccess) {
+        onSuccess();
+      }
     },
   });
 
@@ -41,6 +50,24 @@ export function UpdateOneGoodsAttribute({ id }: { id: string }) {
       onSubmit={handleSubmit}
       isPending={isPending}
       isFetching={isFetching}
+      close={close}
     />
+  );
+}
+
+export function UpdateOneGoodsAttributeModal({
+  id,
+  close,
+  opened,
+  onSuccess,
+}: { id: string } & ModalProps) {
+  return (
+    <Modal
+      opened={opened ?? false}
+      onClose={close}
+      title="Изменить атрибут товара"
+    >
+      <UpdateOneGoodsAttribute id={id} close={close} onSuccess={onSuccess} />
+    </Modal>
   );
 }

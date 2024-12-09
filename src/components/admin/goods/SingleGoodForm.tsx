@@ -32,6 +32,7 @@ import { GoodsCharacteristicValuesMultiselect } from "../goods-characteristics/v
 import { GoodsTagsMultiselect } from "../goods-tags/GoodsTagsMultiselect";
 import { GoodsInternalFieldCombobox } from "../goods-internal-fields/GoodsInternalFieldCombobox";
 import { GoodsInternalFieldValuesMultiselect } from "../goods-internal-fields/values/GoodsInternalFieldValuesMultiselect";
+import { GoodsIdValuesMultiselect } from "../goods-ids/values/GoodsIdValuesMultiselect";
 
 interface SingleGoodFormProps {
   initialValues?: UpdateOneGoodInput;
@@ -263,6 +264,7 @@ export function SingleGoodForm({
                   <GoodsAttributeValueCombobox
                     label="Значение"
                     id={attribute.valueId}
+                    parentId={attribute.id}
                     setId={(id) =>
                       form.setFieldValue(`attributes.${index}.valueId`, id)
                     }
@@ -416,11 +418,16 @@ export function SingleGoodForm({
           </Stack>
         </FormSection>
 
-        <FormSection title="Теги">
+        <FormSection title="Дополнительное">
           <GoodsTagsMultiselect
             ids={form.values.tagIds ?? []}
             setIds={(ids) => form.setFieldValue("tagIds", ids)}
             label="Теги"
+          />
+          <GoodsIdValuesMultiselect
+            ids={form.values.idValueIds ?? []}
+            setIds={(ids) => form.setFieldValue("idValueIds", ids)}
+            label="Идентификаторы"
           />
         </FormSection>
 

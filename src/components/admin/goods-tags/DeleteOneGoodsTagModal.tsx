@@ -5,7 +5,7 @@ import { IconTrash } from "@tabler/icons-react";
 import { api } from "~/trpc/react";
 import { ModalProps } from "~/types/modals";
 
-export function DeleteOneGoodsTagModal({
+export function DeleteOneGoodsTag({
   id,
   close,
   opened,
@@ -26,7 +26,7 @@ export function DeleteOneGoodsTagModal({
   });
 
   return (
-    <Modal opened={opened ?? false} onClose={close} title="Удалить тег товара">
+    <>
       <Text>Вы уверены что хотите удалить этот тег товара?</Text>
       <Box className="flex flex-col gap-2 lg:flex-row-reverse mt-8">
         <Button
@@ -45,6 +45,19 @@ export function DeleteOneGoodsTagModal({
           Отмена
         </Button>
       </Box>
+    </>
+  );
+}
+
+export function DeleteOneGoodsTagModal({
+  id,
+  close,
+  opened,
+  onSuccess,
+}: { id: string } & ModalProps) {
+  return (
+    <Modal opened={opened ?? false} onClose={close} title="Удалить тег товара">
+      <DeleteOneGoodsTag id={id} close={close} onSuccess={onSuccess} />
     </Modal>
   );
 }

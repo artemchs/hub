@@ -10,8 +10,9 @@ import {
   updateOneAttributeValueSchema,
 } from "~/utils/validation/attributes/values/updateOneAttributeValue";
 import { GoodsAttributesCombobox } from "../GoodsAttributeCombobox";
+import { FormProps } from "~/types/forms";
 
-interface SingleGoodsAttributeValueFormProps {
+interface SingleGoodsAttributeValueFormProps extends FormProps {
   initialValues?: UpdateOneAttributeValueInput;
   onSubmit: (
     values: CreateOneAttributeValueInput | UpdateOneAttributeValueInput
@@ -19,7 +20,6 @@ interface SingleGoodsAttributeValueFormProps {
   isPending?: boolean;
   isFetching?: boolean;
   mode: "create" | "update";
-  close: () => void;
 }
 
 export function SingleGoodsAttributeValueForm({

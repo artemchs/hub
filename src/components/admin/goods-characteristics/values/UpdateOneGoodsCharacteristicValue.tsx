@@ -5,16 +5,14 @@ import { api } from "~/trpc/react";
 import { type CreateOneCharacteristicValueInput } from "~/utils/validation/characteristics/values/createOneCharacteristicValue";
 import { type UpdateOneCharacteristicValueInput } from "~/utils/validation/characteristics/values/updateOneCharacteristicValue";
 import { SingleGoodsCharacteristicValueForm } from "./SingleGoodsCharacteristicValueForm";
+import { FormProps } from "~/types/forms";
+import { ModalProps } from "~/types/modals";
 
-export function UpdateOneGoodsCharacteristicValueModal({
+export function UpdateOneGoodsCharacteristicValue({
   id,
-  opened,
   close,
-}: {
-  id: string;
-  opened: boolean;
-  close: () => void;
-}) {
+  onSuccess,
+}: { id: string } & FormProps) {
   const apiUtils = api.useUtils();
 
   const { data, isFetching } = api.characteristics.values.readOne.useQuery({
@@ -28,7 +26,9 @@ export function UpdateOneGoodsCharacteristicValueModal({
           apiUtils.characteristics.values.readManyInfinite.invalidate(),
           apiUtils.characteristics.values.readOne.invalidate({ id }),
         ]);
-        close();
+        if (onSuccess) {
+          onSuccess();
+        }
       },
     });
 
@@ -45,22 +45,37 @@ export function UpdateOneGoodsCharacteristicValueModal({
   };
 
   return (
+    <SingleGoodsCharacteristicValueForm
+      mode="update"
+      initialValues={{
+        id,
+        parentId: data?.characteristicId ?? "",
+        value: data?.value ?? "",
+      }}
+      onSubmit={handleSubmit}
+      isPending={isPending}
+      isFetching={isFetching}
+      close={close}
+    />
+  );
+}
+
+export function UpdateOneGoodsCharacteristicValueModal({
+  id,
+  close,
+  opened,
+  onSuccess,
+}: { id: string } & ModalProps) {
+  return (
     <Modal
-      opened={opened}
+      opened={opened ?? false}
       onClose={close}
-      title="Изменить значение характеристики"
+      title="Изменить значение характеристики товара"
     >
-      <SingleGoodsCharacteristicValueForm
-        mode="update"
-        initialValues={{
-          id,
-          parentId: data?.characteristicId ?? "",
-          value: data?.value ?? "",
-        }}
-        onSubmit={handleSubmit}
-        isPending={isPending}
-        isFetching={isFetching}
+      <UpdateOneGoodsCharacteristicValue
+        id={id}
         close={close}
+        onSuccess={onSuccess}
       />
     </Modal>
   );

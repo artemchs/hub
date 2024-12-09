@@ -3,6 +3,9 @@
 import { api } from "~/trpc/react";
 import { DataCombobox } from "~/components/DataCombobox";
 import { DisplayOneGoodsAttributeName } from "./DisplayOneGoodsAttributeName";
+import { CreateOneGoodsAttributeModal } from "./CreateOneGoodsAttribute";
+import { UpdateOneGoodsAttributeModal } from "./UpdateOneGoodsAttribute";
+import { DeleteOneGoodsAttributeModal } from "./DeleteOneGoodsAttribute";
 
 interface GoodsAttributeComboboxProps {
   id: string | null;
@@ -33,6 +36,18 @@ export function GoodsAttributesCombobox({
       displayComponent={DisplayOneGoodsAttributeName}
       useInfiniteQuery={useAttributes}
       getOptionLabel={(item) => item.name}
+      CreateOneModal={{
+        Component: CreateOneGoodsAttributeModal,
+        onSuccess: async () => {},
+      }}
+      UpdateOneModal={{
+        Component: UpdateOneGoodsAttributeModal,
+        onSuccess: async () => {},
+      }}
+      DeleteOneModal={{
+        Component: DeleteOneGoodsAttributeModal,
+        onSuccess: async () => {},
+      }}
     />
   );
 }

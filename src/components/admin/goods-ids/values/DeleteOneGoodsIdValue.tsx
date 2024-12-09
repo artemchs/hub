@@ -5,7 +5,7 @@ import { IconTrash } from "@tabler/icons-react";
 import { api } from "~/trpc/react";
 import { ModalProps } from "~/types/modals";
 
-export function DeleteOneGoodsCharacteristicValue({
+export function DeleteOneGoodsIdValue({
   id,
   close,
   opened,
@@ -13,21 +13,18 @@ export function DeleteOneGoodsCharacteristicValue({
 }: { id: string } & ModalProps) {
   const apiUtils = api.useUtils();
 
-  const { mutate, isPending } =
-    api.characteristics.values.deleteOne.useMutation({
-      async onSuccess() {
-        await Promise.all([
-          apiUtils.characteristics.values.readManyInfinite.invalidate(),
-        ]);
-        if (onSuccess) {
-          onSuccess();
-        }
-      },
-    });
+  const { mutate, isPending } = api.ids.values.deleteOne.useMutation({
+    async onSuccess() {
+      await Promise.all([apiUtils.ids.values.readManyInfinite.invalidate()]);
+      if (onSuccess) {
+        onSuccess();
+      }
+    },
+  });
 
   return (
     <>
-      <Text>Вы уверены что хотите удалить это значение характеристики?</Text>
+      <Text>Вы уверены что хотите удалить это значение идентификатора?</Text>
       <Box className="flex flex-col gap-2 lg:flex-row-reverse mt-8">
         <Button
           color="red"
@@ -49,7 +46,7 @@ export function DeleteOneGoodsCharacteristicValue({
   );
 }
 
-export function DeleteOneGoodsCharacteristicValueModal({
+export function DeleteOneGoodsIdValueModal({
   id,
   close,
   opened,
@@ -59,13 +56,9 @@ export function DeleteOneGoodsCharacteristicValueModal({
     <Modal
       opened={opened ?? false}
       onClose={close}
-      title="Удалить значение характеристики"
+      title="Удалить значение идентификатора"
     >
-      <DeleteOneGoodsCharacteristicValue
-        id={id}
-        close={close}
-        onSuccess={onSuccess}
-      />
+      <DeleteOneGoodsIdValue id={id} close={close} onSuccess={onSuccess} />
     </Modal>
   );
 }

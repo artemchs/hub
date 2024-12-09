@@ -4,7 +4,7 @@ import { ActionIcon, Group } from "@mantine/core";
 import { useDisclosure } from "@mantine/hooks";
 import { IconPencil, IconTrash } from "@tabler/icons-react";
 import Link from "next/link";
-import { DeleteOneGoodsCharacteristicModal } from "~/components/admin/goods-characteristics/DeleteOneGoodsCharacteristicModal";
+import { DeleteOneGoodsCharacteristicModal } from "~/components/admin/goods-characteristics/DeleteOneGoodsCharacteristic";
 
 export function GoodsCharacteristicsTableRowActions({ id }: { id: string }) {
   const [opened, { open, close }] = useDisclosure(false);
@@ -29,6 +29,7 @@ export function GoodsCharacteristicsTableRowActions({ id }: { id: string }) {
         close={close}
         id={id}
         opened={opened}
+        onSuccess={async () => {}}
       />
     </>
   );

@@ -3,6 +3,9 @@
 import { api } from "~/trpc/react";
 import { DataCombobox } from "~/components/DataCombobox";
 import { DisplayGoodsIdName } from "./DisplayGoodsIdName";
+import { CreateGoodsIdModal } from "./CreateGoodsId";
+import { UpdateGoodsIdModal } from "./UpdateGoodsId";
+import { DeleteGoodsIdModal } from "./DeleteGoodsId";
 
 interface GoodsIdComboboxProps {
   id: string | null;
@@ -29,6 +32,18 @@ export function GoodsIdCombobox({ id, setId, label }: GoodsIdComboboxProps) {
       displayComponent={DisplayGoodsIdName}
       useInfiniteQuery={useIds}
       getOptionLabel={(item) => item.name}
+      CreateOneModal={{
+        Component: CreateGoodsIdModal,
+        onSuccess: async () => {},
+      }}
+      UpdateOneModal={{
+        Component: UpdateGoodsIdModal,
+        onSuccess: async () => {},
+      }}
+      DeleteOneModal={{
+        Component: DeleteGoodsIdModal,
+        onSuccess: async () => {},
+      }}
     />
   );
 }

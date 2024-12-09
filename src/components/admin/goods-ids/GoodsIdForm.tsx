@@ -3,6 +3,7 @@ import { useForm } from "@mantine/form";
 import { zodResolver } from "mantine-form-zod-resolver";
 import Link from "next/link";
 import { useEffect } from "react";
+import { FormProps } from "~/types/forms";
 import {
   createOneIdSchema,
   type CreateOneIdInput,
@@ -12,7 +13,7 @@ import {
   type UpdateOneIdInput,
 } from "~/utils/validation/ids/updateOneId";
 
-interface GoodsIdFormProps {
+interface GoodsIdFormProps extends FormProps {
   initialValues?: UpdateOneIdInput;
   onSubmit: (values: CreateOneIdInput | UpdateOneIdInput) => void;
   isPending?: boolean;
@@ -26,6 +27,7 @@ export function GoodsIdForm({
   isPending,
   isFetching,
   mode,
+  close,
 }: GoodsIdFormProps) {
   const form = useForm({
     mode: "uncontrolled",
@@ -58,7 +60,7 @@ export function GoodsIdForm({
         {...form.getInputProps("name")}
       />
       <Group justify="flex-end" mt="md">
-        <Button variant="subtle" component={Link} href="/admin/ids">
+        <Button variant="subtle" onClick={close}>
           Отменить
         </Button>
         <Button type="submit" loading={isPending}>

@@ -3,26 +3,30 @@
 import { Box, Button, Modal, Text } from "@mantine/core";
 import { IconTrash } from "@tabler/icons-react";
 import { api } from "~/trpc/react";
+import { ModalProps } from "~/types/modals";
 
-export function DeleteOneGoodsAttributeModal({
+export function DeleteOneGoodsAttribute({
   id,
-  opened,
   close,
-}: {
-  id: string;
-  opened: boolean;
-  close: () => void;
-}) {
+  opened,
+  onSuccess,
+}: { id: string } & ModalProps) {
   const apiUtils = api.useUtils();
 
   const { mutate, isPending } = api.attributes.deleteOne.useMutation({
     async onSuccess() {
-      await apiUtils.attributes.readMany.invalidate();
+      await Promise.all([
+        apiUtils.attributes.readManyInfinite.invalidate(),
+        apiUtils.attributes.readMany.invalidate(),
+      ]);
+      if (onSuccess) {
+        onSuccess();
+      }
     },
   });
 
   return (
-    <Modal opened={opened} onClose={close} title="Удалить атрибут">
+    <>
       <Text>Вы уверены что хотите удалить этот атрибут?</Text>
       <Box className="flex flex-col gap-2 lg:flex-row-reverse mt-8">
         <Button
@@ -41,6 +45,19 @@ export function DeleteOneGoodsAttributeModal({
           Отмена
         </Button>
       </Box>
+    </>
+  );
+}
+
+export function DeleteOneGoodsAttributeModal({
+  id,
+  close,
+  opened,
+  onSuccess,
+}: { id: string } & ModalProps) {
+  return (
+    <Modal opened={opened ?? false} onClose={close} title="Удалить атрибут">
+      <DeleteOneGoodsAttribute id={id} close={close} onSuccess={onSuccess} />
     </Modal>
   );
 }
