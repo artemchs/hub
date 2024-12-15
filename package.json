@@ -62,6 +62,7 @@
     "@trpc/react-query": "^11.0.0-rc.446",
     "@trpc/server": "^11.0.0-rc.446",
     "clsx": "^2.1.1",
+    "cron": "^3.3.1",
     "cross-env": "^7.0.3",
     "dayjs": "^1.11.13",
     "decimal.js": "^10.4.3",

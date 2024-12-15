@@ -352,10 +352,9 @@ model GoodsExportJob {
     createdAt DateTime @default(now())
     updatedAt DateTime @updatedAt
 
-    name      String
-    schedule  DateTime
-    exports   GoodsExport[]
-    nextRunAt DateTime
-    schema    GoodsExportSchema @relation(fields: [schemaId], references: [id], onDelete: Cascade)
-    schemaId  String
+    name     String
+    schedule String
+    exports  GoodsExport[]
+    schema   GoodsExportSchema @relation(fields: [schemaId], references: [id], onDelete: Cascade)
+    schemaId String
 }
