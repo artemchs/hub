@@ -12,7 +12,6 @@ import { breakpoints, colors } from "./theme";
 import { type Metadata } from "next";
 
 import { TRPCReactProvider } from "~/trpc/react";
-import Head from "next/head";
 import MantineDatesProvider from "~/components/MantineDatesProvider";
 
 export const metadata: Metadata = {
@@ -34,9 +33,9 @@ export default function RootLayout({
 }: Readonly<{ children: React.ReactNode }>) {
   return (
     <html lang="en" suppressHydrationWarning>
-      <Head>
+      <head>
         <ColorSchemeScript />
-      </Head>
+      </head>
       <body className="antialiased bg-gray-50">
         <MantineProvider theme={theme}>
           <MantineDatesProvider>
