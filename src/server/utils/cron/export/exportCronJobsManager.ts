@@ -9,6 +9,7 @@ import { storage } from "~/server/storage";
 class ExportCronJobsManager {
     private static instance: ExportCronJobsManager;
     private jobs: Map<string, CronJob> = new Map();
+    private isInitialized = false;
 
     /**
      * Private constructor to prevent direct instantiation.
@@ -33,6 +34,12 @@ class ExportCronJobsManager {
      * @returns A promise that resolves when initialization is complete.
      */
     public async initialize(): Promise<void> {
+        if (this.isInitialized) {
+            return;
+        }
+
+        this.isInitialized = true;
+
         try {
             const goodsExportJobs = await db.goodsExportJob.findMany();
             for (const { id, schedule } of goodsExportJobs) {
