@@ -1,5 +1,14 @@
+"use client";
+
+import { useRouter } from "next/navigation";
 import { CreateOneGoodsTag } from "~/components/admin/goods-tags/CreateOneGoodsTag";
 
 export default function Page() {
-  return <CreateOneGoodsTag />;
+    const router = useRouter();
+
+    const close = () => {
+        router.push("/admin/tags");
+    };
+
+    return <CreateOneGoodsTag close={close} />;
 }

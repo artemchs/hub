@@ -1,9 +1,9 @@
 import { Builder } from "xml2js";
 import { env } from "~/env";
-import { type PrismaTransaction } from "~/server/db.js";
-import { findBestIdentifier } from "../findBestIdentifier.js";
-import type { RozetkaOffer } from "./types.js";
-import { ExportGoods } from "../types.js";
+import { ExportGoods } from "../types";
+import { PrismaTransaction } from "~/server/db";
+import { RozetkaOffer } from "./types";
+import { findBestIdentifier } from "../findBestIdentifier";
 
 async function buildOffers(
     goods: ExportGoods,

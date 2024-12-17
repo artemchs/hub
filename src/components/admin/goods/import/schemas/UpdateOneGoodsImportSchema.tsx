@@ -8,43 +8,49 @@ import { SingleGoodsImportSchemaForm } from "./SingleGoodsImportSchemaForm";
 import { parseGoodsImportSchema } from "~/utils/validation/goods/import/schemas/parseGoodsImportSchema";
 
 export function UpdateOneGoodsImportSchema({ id }: { id: string }) {
-  const apiUtils = api.useUtils();
-  const router = useRouter();
+    const apiUtils = api.useUtils();
+    const router = useRouter();
 
-  const { data, isFetching } = api.goods.import.schemas.readOne.useQuery({
-    id,
-  });
-
-  const { mutate, isPending } = api.goods.import.schemas.updateOne.useMutation({
-    async onSuccess() {
-      await Promise.all([
-        apiUtils.goods.import.schemas.readMany.invalidate(),
-        apiUtils.goods.import.schemas.readOne.invalidate({ id }),
-      ]);
-      router.push("/admin/goods/import/schemas");
-    },
-  });
-
-  const handleSubmit = (
-    values: CreateOneGoodsImportSchemaInput | UpdateOneGoodsImportSchemaInput
-  ) => {
-    mutate({
-      ...values,
-      id,
-    });
-  };
-
-  return (
-    <SingleGoodsImportSchemaForm
-      mode="update"
-      initialValues={{
+    const { data, isFetching } = api.goods.import.schemas.readOne.useQuery({
         id,
-        name: data?.name ?? "",
-        schema: data?.schema ? parseGoodsImportSchema(data) : {},
-      }}
-      onSubmit={handleSubmit}
-      isPending={isPending}
-      isFetching={isFetching}
-    />
-  );
+    });
+
+    const { mutate, isPending } =
+        api.goods.import.schemas.updateOne.useMutation({
+            async onSuccess() {
+                await Promise.all([
+                    apiUtils.goods.import.schemas.readMany.invalidate(),
+                    apiUtils.goods.import.schemas.readOne.invalidate({ id }),
+                ]);
+                router.push("/admin/goods/import/schemas");
+            },
+        });
+
+    const handleSubmit = (
+        values:
+            | CreateOneGoodsImportSchemaInput
+            | UpdateOneGoodsImportSchemaInput
+    ) => {
+        mutate({
+            ...values,
+            id,
+        });
+    };
+
+    return (
+        <SingleGoodsImportSchemaForm
+            mode="update"
+            initialValues={{
+                id,
+                name: data?.name ?? "",
+                schema: data?.schema ? parseGoodsImportSchema(data) : {},
+                createNewEntries: data?.createNewEntries ?? false,
+                nullifyMissingEntries: data?.nullifyMissingEntries ?? false,
+                updateExistingEntries: data?.updateExistingEntries ?? false,
+            }}
+            onSubmit={handleSubmit}
+            isPending={isPending}
+            isFetching={isFetching}
+        />
+    );
 }

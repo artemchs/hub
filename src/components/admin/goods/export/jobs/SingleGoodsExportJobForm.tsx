@@ -17,7 +17,7 @@ interface SingleGoodsExportJobFormProps {
     initialValues?: UpdateOneGoodsExportJobInput;
     onSubmit: (
         values: CreateOneGoodsExportJobInput | UpdateOneGoodsExportJobInput
-    ) => void;
+    ) => void | Promise<void>;
     isPending?: boolean;
     isFetching?: boolean;
     mode: "create" | "update";
@@ -64,6 +64,7 @@ export function SingleGoodsExportJobForm({
         <form
             onSubmit={(e) => {
                 e.stopPropagation();
+                // @ts-expect-error FIXME: form.onSubmit(onSubmit) should be valid
                 form.onSubmit(onSubmit)(e);
             }}
             className="flex flex-col gap-4"

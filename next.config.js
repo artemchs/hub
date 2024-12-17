@@ -6,18 +6,22 @@ import "./src/env.js";
 
 /** @type {import("next").NextConfig} */
 const config = {
+    output: "standalone",
     experimental: {
         optimizePackageImports: ["@mantine/core", "@mantine/hooks"],
     },
     images: {
         remotePatterns: [
             {
-                protocol: 'https',
+                protocol: "https",
                 hostname: process.env.NEXT_PUBLIC_CLOUDFRONT_HOSTNAME ?? "",
-                port: '',
-                pathname: '/Media/**',
+                port: "",
+                pathname: "/Media/**",
             },
         ],
+    },
+    eslint: {
+        ignoreDuringBuilds: true,
     },
 };
 

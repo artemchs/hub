@@ -1,11 +1,15 @@
+"use client";
+
+import { useParams, useRouter } from "next/navigation";
 import { UpdateOneGoodsCharacteristic } from "~/components/admin/goods-characteristics/UpdateOneGoodsCharacteristic";
 
-export default async function Page({
-  params,
-}: {
-  params: Promise<{ id: string }>;
-}) {
-  const id = (await params).id;
+export default function Page() {
+    const params = useParams<{ id: string }>();
+    const router = useRouter();
 
-  return <UpdateOneGoodsCharacteristic id={id} />;
+    const close = () => {
+        router.push("/admin/characteristics");
+    };
+
+    return <UpdateOneGoodsCharacteristic close={close} id={params.id} />;
 }

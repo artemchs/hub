@@ -1,11 +1,15 @@
+"use client";
+
+import { useParams, useRouter } from "next/navigation";
 import { UpdateOneGoodsTag } from "~/components/admin/goods-tags/UpdateOneGoodsTag";
 
-export default async function Page({
-  params,
-}: {
-  params: Promise<{ id: string }>;
-}) {
-  const id = (await params).id;
+export default function Page() {
+    const params = useParams<{ id: string }>();
+    const router = useRouter();
 
-  return <UpdateOneGoodsTag id={id} />;
+    const close = () => {
+        router.push("/admin/tags");
+    };
+
+    return <UpdateOneGoodsTag id={params.id} close={close} />;
 }
