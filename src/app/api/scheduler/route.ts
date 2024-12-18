@@ -3,7 +3,7 @@ import { exportCronJobsManager } from "~/server/utils/cron/export/exportCronJobs
 
 export async function POST() {
     try {
-        exportCronJobsManager.initialize();
+        await exportCronJobsManager.initialize();
         console.log("Export cron jobs initialized.");
 
         return NextResponse.json({ data: "Success", status: 200 });
