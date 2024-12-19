@@ -20,9 +20,6 @@ WORKDIR /app
 COPY pnpm-lock.yaml package.json ./
 COPY prisma ./prisma
 
-# Create env.js for Next.js config
-RUN echo "export const env = process.env;" > env.js
-
 # Install dependencies with Prisma schema available
 RUN pnpm install --frozen-lockfile
 
@@ -68,7 +65,6 @@ COPY --from=builder --chown=nextjs:nodejs /app/.next/standalone ./
 COPY --from=builder --chown=nextjs:nodejs /app/.next/static ./.next/static
 COPY --from=builder /app/public ./public
 COPY --from=builder /app/prisma ./prisma
-COPY --from=builder /app/env.js ./env.js
 
 # Runtime environment variables
 ENV NODE_ENV=production
@@ -84,6 +80,8 @@ ENV S3_REGION=${S3_REGION}
 ENV NEXT_PUBLIC_CLOUDFRONT_HOSTNAME=${NEXT_PUBLIC_CLOUDFRONT_HOSTNAME}
 ENV NEXT_PUBLIC_URL=${NEXT_PUBLIC_URL}
 ENV SKIP_ENV_VALIDATION=1
+
+RUN pnpm add -g prisma
 
 USER nextjs
 

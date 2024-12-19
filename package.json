@@ -15,7 +15,7 @@
         "lint": "next lint",
         "lint:fix": "next lint --fix",
         "preview": "next build && next start",
-        "start": "pnpm add -g prisma && prisma migrate deploy && cross-env NODE_ENV=production node dist/server.js",
+        "start": "prisma migrate deploy && cross-env NODE_ENV=production node dist/server.js",
         "typecheck": "tsc --noEmit"
     },
     "dependencies": {
