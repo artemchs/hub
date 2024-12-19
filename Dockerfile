@@ -1,30 +1,44 @@
-# Start with a lightweight Node.js Alpine image as our base
+# Start with Node.js Alpine image and add required dependencies
 FROM node:20-alpine AS base
 
-# Create a builder stage where we'll compile the application
+# Install OpenSSL and other required dependencies
+RUN apk add --no-cache openssl libc6-compat
+
+# Create builder stage
 FROM base AS builder
 WORKDIR /app
 
-# Copy package management files first to leverage Docker layer caching
-# This means if dependencies haven't changed, we can use cached layers
+# Copy package files first
 COPY package.json yarn.lock* package-lock.json* pnpm-lock.yaml* ./
 
-# Install dependencies using the appropriate package manager
-# The script checks for different lock files to determine which to use
+# Copy Prisma schema before installing dependencies
+# This is crucial because prisma generate runs during installation
+COPY prisma ./prisma
+
+# Install dependencies with improved error handling
 RUN \
-    if [ -f yarn.lock ]; then yarn --frozen-lockfile; \
-    elif [ -f package-lock.json ]; then npm ci; \
-    elif [ -f pnpm-lock.yaml ]; then corepack enable pnpm && pnpm i; \
-    else echo "Warning: Lockfile not found. It is recommended to commit lockfiles to version control." && yarn install; \
+    if [ -f yarn.lock ]; then \
+        yarn config set network-timeout 300000 && \
+        yarn --frozen-lockfile && \
+        yarn prisma generate; \
+    elif [ -f package-lock.json ]; then \
+        npm ci && \
+        npx prisma generate; \
+    elif [ -f pnpm-lock.yaml ]; then \
+        corepack enable pnpm && \
+        pnpm i && \
+        pnpm prisma generate; \
+    else \
+        echo "Warning: Lockfile not found. It is recommended to commit lockfiles to version control." && \
+        yarn install && \
+        yarn prisma generate; \
     fi
 
-# Copy the source code and configuration files
-# Note that /src contains most of our application code now
+# Copy the rest of the application code
 COPY src ./src
-COPY prisma ./prisma
 COPY public ./public
 
-# Copy configuration files from root
+# Copy configuration files
 COPY next.config.js .
 COPY nodemon.json .
 COPY tailwind.config.ts .
@@ -55,7 +69,7 @@ ENV NEXT_PUBLIC_CLOUDFRONT_HOSTNAME=${NEXT_PUBLIC_CLOUDFRONT_HOSTNAME}
 ARG NEXT_PUBLIC_URL
 ENV NEXT_PUBLIC_URL=${NEXT_PUBLIC_URL}
 
-# Build the application using the appropriate package manager
+# Build the application
 RUN \
     if [ -f yarn.lock ]; then yarn build; \
     elif [ -f package-lock.json ]; then npm run build; \
@@ -63,25 +77,29 @@ RUN \
     else npm run build; \
     fi
 
-# Create the production stage with minimal dependencies
+# Production stage
 FROM base AS runner
-
-# Install curl for container health checks
-RUN apk --no-cache add curl
 
 WORKDIR /app
 
 # Create a non-root user for security
-RUN addgroup --system --gid 1001 nodejs
-RUN adduser --system --uid 1001 nextjs
-USER nextjs
+RUN addgroup --system --gid 1001 nodejs && \
+    adduser --system --uid 1001 nextjs
 
-# Copy only the necessary built files from the builder stage
+# Copy only necessary files for production
 COPY --from=builder /app/public ./public
+COPY --from=builder /app/prisma ./prisma
 COPY --from=builder --chown=nextjs:nodejs /app/.next/standalone ./
 COPY --from=builder --chown=nextjs:nodejs /app/.next/static ./.next/static
+COPY --from=builder /app/node_modules/.prisma ./node_modules/.prisma
 
-# Define runtime environment variables
+# Set permissions for the nextjs user
+RUN chown -R nextjs:nodejs /app
+
+# Switch to non-root user
+USER nextjs
+
+# Runtime environment variables
 ENV DATABASE_URL=${DATABASE_URL}
 ENV NEXTAUTH_URL=${NEXTAUTH_URL}
 ENV AUTH_GOOGLE_ID=${AUTH_GOOGLE_ID}
