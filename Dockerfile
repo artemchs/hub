@@ -18,7 +18,7 @@ RUN \
 # Adjust the files and folders that should be copied to the build container
 COPY src ./src
 COPY public ./public
-COPY next.config.mjs .
+COPY next.config.js .
 COPY prisma ./prisma
 COPY tailwind.config.ts .
 COPY tsconfig.json .
