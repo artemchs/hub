@@ -1,13 +1,16 @@
-FROM node:23-alpine AS base
+# Start with a lightweight Node.js Alpine image as our base
+FROM node:20-alpine AS base
 
-# Step 1. Rebuild the source code only when needed
+# Create a builder stage where we'll compile the application
 FROM base AS builder
-
 WORKDIR /app
 
-# Install dependencies based on the preferred package manager
+# Copy package management files first to leverage Docker layer caching
+# This means if dependencies haven't changed, we can use cached layers
 COPY package.json yarn.lock* package-lock.json* pnpm-lock.yaml* ./
-# Omit --production flag for TypeScript devDependencies
+
+# Install dependencies using the appropriate package manager
+# The script checks for different lock files to determine which to use
 RUN \
     if [ -f yarn.lock ]; then yarn --frozen-lockfile; \
     elif [ -f package-lock.json ]; then npm ci; \
@@ -15,13 +18,14 @@ RUN \
     else echo "Warning: Lockfile not found. It is recommended to commit lockfiles to version control." && yarn install; \
     fi
 
-# Adjust the files and folders that should be copied to the build container
-COPY app ./app
-COPY public ./public
-COPY components ./components
-COPY lib ./lib
-COPY next.config.js .
+# Copy the source code and configuration files
+# Note that /src contains most of our application code now
+COPY src ./src
 COPY prisma ./prisma
+COPY public ./public
+
+# Copy configuration files from root
+COPY next.config.js .
 COPY components.json .
 COPY tailwind.config.ts .
 COPY tsconfig.json .
@@ -29,7 +33,7 @@ COPY server.ts .
 COPY tsconfig.server.json .
 COPY postcss.config.mjs .
 
-# Environment variables must be present at build time
+# Define build-time environment variables
 ARG DATABASE_URL
 ENV DATABASE_URL=${DATABASE_URL}
 ARG NEXTAUTH_URL
@@ -51,7 +55,7 @@ ENV NEXT_PUBLIC_CLOUDFRONT_HOSTNAME=${NEXT_PUBLIC_CLOUDFRONT_HOSTNAME}
 ARG NEXT_PUBLIC_URL
 ENV NEXT_PUBLIC_URL=${NEXT_PUBLIC_URL}
 
-# Build Next.js based on the preferred package manager
+# Build the application using the appropriate package manager
 RUN \
     if [ -f yarn.lock ]; then yarn build; \
     elif [ -f package-lock.json ]; then npm run build; \
@@ -59,24 +63,25 @@ RUN \
     else npm run build; \
     fi
 
-# Step 2. Production image, copy all the files and run next
+# Create the production stage with minimal dependencies
 FROM base AS runner
 
+# Install curl for container health checks
 RUN apk --no-cache add curl
 
 WORKDIR /app
 
+# Create a non-root user for security
 RUN addgroup --system --gid 1001 nodejs
 RUN adduser --system --uid 1001 nextjs
 USER nextjs
 
+# Copy only the necessary built files from the builder stage
 COPY --from=builder /app/public ./public
-
-# Automatically leverage output traces to reduce image size
 COPY --from=builder --chown=nextjs:nodejs /app/.next/standalone ./
 COPY --from=builder --chown=nextjs:nodejs /app/.next/static ./.next/static
 
-# Environment variables must be redefined at run time
+# Define runtime environment variables
 ENV DATABASE_URL=${DATABASE_URL}
 ENV NEXTAUTH_URL=${NEXTAUTH_URL}
 ENV AUTH_GOOGLE_ID=${AUTH_GOOGLE_ID}
@@ -88,8 +93,9 @@ ENV S3_REGION=${S3_REGION}
 ENV NEXT_PUBLIC_CLOUDFRONT_HOSTNAME=${NEXT_PUBLIC_CLOUDFRONT_HOSTNAME}
 ENV NEXT_PUBLIC_URL=${NEXT_PUBLIC_URL}
 
+# Configure the application port
 EXPOSE 3000
-
 ENV PORT 3000
 
-CMD HOSTNAME=0.0.0.0 node server.js
+# Start the application
+CMD ["node", "server.js"]
