@@ -4,7 +4,7 @@
     "private": true,
     "type": "module",
     "scripts": {
-        "build": "next build && tsc --project tsconfig.server.json && pnpm run db:migrate ",
+        "build": "next build && tsc --project tsconfig.server.json",
         "check": "next lint && tsc --noEmit",
         "db:generate": "prisma migrate dev",
         "db:migrate": "prisma migrate deploy",
@@ -15,7 +15,7 @@
         "lint": "next lint",
         "lint:fix": "next lint --fix",
         "preview": "next build && next start",
-        "start": "cross-env NODE_ENV=production node dist/server.js",
+        "start": "prisma migrate deploy && cross-env NODE_ENV=production node dist/server.js",
         "typecheck": "tsc --noEmit"
     },
     "dependencies": {
