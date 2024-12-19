@@ -26,7 +26,7 @@ COPY public ./public
 
 # Copy configuration files from root
 COPY next.config.js .
-COPY components.json .
+COPY nodemon.json .
 COPY tailwind.config.ts .
 COPY tsconfig.json .
 COPY server.ts .
