@@ -15,7 +15,7 @@
         "lint": "next lint",
         "lint:fix": "next lint --fix",
         "preview": "next build && next start",
-        "start": "pnpm dlx prisma migrate deploy && cross-env NODE_ENV=production node dist/server.js",
+        "start": "pnpm run db:migrate && cross-env NODE_ENV=production node dist/server.js",
         "typecheck": "tsc --noEmit"
     },
     "dependencies": {
@@ -42,6 +42,7 @@
         "@mantine/tiptap": "^7.14.0",
         "@paralleldrive/cuid2": "^2.2.2",
         "@prisma/client": "^6.0.1",
+        "prisma": "^6.0.1",
         "@t3-oss/env-nextjs": "^0.10.1",
         "@tabler/icons-react": "^3.21.0",
         "@tanstack/react-query": "^5.50.0",
@@ -99,7 +100,6 @@
         "postcss": "^8.4.47",
         "postcss-preset-mantine": "^1.17.0",
         "postcss-simple-vars": "^7.0.1",
-        "prisma": "^6.0.1",
         "tailwindcss": "^3.4.14",
         "ts-node": "^10.9.2",
         "tsconfig-paths": "^4.2.0",
