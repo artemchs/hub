@@ -21,6 +21,7 @@ COPY --from=deps /app/node_modules ./node_modules
 COPY . .
 ENV NODE_ENV=production
 ENV SKIP_ENV_VALIDATION=1
+ARG NEXT_PUBLIC_CLOUDFRONT_HOSTNAME
 RUN pnpm build
 
 # === RUNNER ===
