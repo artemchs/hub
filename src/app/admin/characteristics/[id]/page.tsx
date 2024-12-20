@@ -11,5 +11,11 @@ export default function Page() {
         router.push("/admin/characteristics");
     };
 
-    return <UpdateOneGoodsCharacteristic close={close} id={params.id} />;
+    return (
+        <UpdateOneGoodsCharacteristic
+            close={close}
+            id={params.id}
+            onSuccess={close}
+        />
+    );
 }

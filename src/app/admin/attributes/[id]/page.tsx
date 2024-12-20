@@ -11,5 +11,11 @@ export default function Page() {
         router.push("/admin/attributes");
     };
 
-    return <UpdateOneGoodsAttribute close={close} id={params.id} />;
+    return (
+        <UpdateOneGoodsAttribute
+            close={close}
+            id={params.id}
+            onSuccess={close}
+        />
+    );
 }

@@ -10,5 +10,5 @@ export default function Page() {
         router.push("/admin/characteristics");
     };
 
-    return <CreateOneGoodsCharacteristic close={close} />;
+    return <CreateOneGoodsCharacteristic close={close} onSuccess={close} />;
 }

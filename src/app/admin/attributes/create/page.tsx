@@ -10,5 +10,5 @@ export default function Page() {
         router.push("/admin/attributes");
     };
 
-    return <CreateOneGoodsAttribute close={close} />;
+    return <CreateOneGoodsAttribute close={close} onSuccess={close} />;
 }

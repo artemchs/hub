@@ -10,5 +10,5 @@ export default function Page() {
         router.push("/admin/ids");
     };
 
-    return <CreateGoodsId close={close} />;
+    return <CreateGoodsId close={close} onSuccess={close} />;
 }

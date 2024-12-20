@@ -10,5 +10,5 @@ export default function Page() {
         router.push("/admin/tags");
     };
 
-    return <CreateOneGoodsTag close={close} />;
+    return <CreateOneGoodsTag close={close} onSuccess={close} />;
 }

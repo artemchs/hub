@@ -11,5 +11,5 @@ export default function Page() {
         router.push("/admin/tags");
     };
 
-    return <UpdateOneGoodsTag id={params.id} close={close} />;
+    return <UpdateOneGoodsTag id={params.id} close={close} onSuccess={close} />;
 }
