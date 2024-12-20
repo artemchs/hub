@@ -3,6 +3,7 @@
     "version": "0.1.0",
     "private": true,
     "type": "module",
+    "packageManager": "pnpm@9.15.1",
     "scripts": {
         "build": "next build && tsc --project tsconfig.server.json",
         "check": "next lint && tsc --noEmit",
@@ -97,6 +98,7 @@
         "eslint-config-next": "^15.0.1",
         "nodemon": "^3.1.9",
         "postcss": "^8.4.47",
+        "postcss-import": "^16.1.0",
         "postcss-preset-mantine": "^1.17.0",
         "postcss-simple-vars": "^7.0.1",
         "prisma": "^6.0.1",
