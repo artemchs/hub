@@ -49,7 +49,7 @@ export const goodsColumns = [
             if (
                 !row.fullPrice ||
                 !row.price ||
-                row.fullPrice.lessThanOrEqualTo(new Decimal(0))
+                (row.fullPrice as unknown as number) <= 0
             ) {
                 return null;
             }
