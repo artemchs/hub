@@ -119,33 +119,29 @@ export const mapJsonToGoods = (
                 : [];
 
             const characteristics = schema.characteristics
-                ? schema.characteristics.map((characteristic) => {
-                      if (!item[characteristic.field]) {
-                          throw new Error(
-                              `Characteristic field is required. Item with SKU: ${sku}`
-                          );
-                      }
-
-                      return {
-                          id: characteristic.id,
-                          values: String(item[characteristic.field]).split(","),
-                      };
-                  })
+                ? schema.characteristics
+                      .filter((characteristic) => item[characteristic.field])
+                      .map((characteristic) => {
+                          return {
+                              id: characteristic.id,
+                              values: String(item[characteristic.field]).split(
+                                  ","
+                              ),
+                          };
+                      })
                 : [];
 
             const internalFields = schema.internalFields
-                ? schema.internalFields.map((internalField) => {
-                      if (!item[internalField.field]) {
-                          throw new Error(
-                              `Internal field is required. Item with SKU: ${sku}`
-                          );
-                      }
-
-                      return {
-                          id: internalField.id,
-                          values: String(item[internalField.field]).split(","),
-                      };
-                  })
+                ? schema.internalFields
+                      .filter((internalField) => item[internalField.field])
+                      .map((internalField) => {
+                          return {
+                              id: internalField.id,
+                              values: String(item[internalField.field]).split(
+                                  ","
+                              ),
+                          };
+                      })
                 : [];
 
             mappedGoods.push({
