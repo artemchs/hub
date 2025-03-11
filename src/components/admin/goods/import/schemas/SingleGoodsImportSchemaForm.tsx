@@ -49,6 +49,9 @@ export function SingleGoodsImportSchemaForm({
         initialValues: initialValues ?? {
             id: mode === "update" ? "" : undefined,
             name: "",
+            createNewEntries: false,
+            updateExistingEntries: false,
+            nullifyMissingEntries: false,
             schema: {
                 name: "",
                 sku: "",
@@ -63,9 +66,6 @@ export function SingleGoodsImportSchemaForm({
                 characteristics: [],
                 ids: [],
                 internalFields: [],
-                createNewEntries: false,
-                updateExistingEntries: false,
-                nullifyMissingEntries: false,
             },
         },
         validate: zodResolver(
@@ -87,7 +87,6 @@ export function SingleGoodsImportSchemaForm({
         <form
             onSubmit={(e) => {
                 e.stopPropagation();
-                // @ts-expect-error FIXME: form.onSubmit(onSubmit) should be valid
                 form.onSubmit(onSubmit)(e);
             }}
             className="flex flex-col gap-4"
@@ -101,22 +100,22 @@ export function SingleGoodsImportSchemaForm({
                 />
                 <Checkbox
                     label="Создавать новые записи"
-                    key={form.key("schema.createNewEntries")}
-                    {...form.getInputProps("schema.createNewEntries", {
+                    key={form.key("createNewEntries")}
+                    {...form.getInputProps("createNewEntries", {
                         type: "checkbox",
                     })}
                 />
                 <Checkbox
                     label="Обновлять существующие записи"
-                    key={form.key("schema.updateExistingEntries")}
-                    {...form.getInputProps("schema.updateExistingEntries", {
+                    key={form.key("updateExistingEntries")}
+                    {...form.getInputProps("updateExistingEntries", {
                         type: "checkbox",
                     })}
                 />
                 <Checkbox
                     label="Обнулять отсутствующие записи"
-                    key={form.key("schema.nullifyMissingEntries")}
-                    {...form.getInputProps("schema.nullifyMissingEntries", {
+                    key={form.key("nullifyMissingEntries")}
+                    {...form.getInputProps("nullifyMissingEntries", {
                         type: "checkbox",
                     })}
                 />
