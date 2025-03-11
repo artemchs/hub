@@ -1,6 +1,7 @@
 "use client";
 
 import { Box, Image } from "@mantine/core";
+import Decimal from "decimal.js";
 import { createMRTColumnHelper } from "mantine-react-table";
 import { DisplayDate } from "~/components/DisplayDate";
 import { env } from "~/env";
@@ -36,13 +37,45 @@ export const goodsColumns = [
         id: "sku",
     }),
     columnHelper.accessor((row) => row.fullPrice, {
-        header: "Полная цена",
+        header: "Старая цена",
         id: "fullPrice",
     }),
     columnHelper.accessor((row) => row.price, {
-        header: "Цена",
+        header: "Новая цена",
         id: "price",
     }),
+    columnHelper.accessor(
+        (row) => {
+            if (
+                !row.fullPrice ||
+                !row.price ||
+                row.fullPrice.lessThanOrEqualTo(0)
+            ) {
+                return null;
+            }
+
+            // Using Decimal.js for precise calculation
+            const fullPrice = new Decimal(row.fullPrice);
+            const price = new Decimal(row.price);
+
+            // Calculate discount percentage: ((fullPrice - price) / fullPrice) * 100
+            const discount = fullPrice
+                .minus(price)
+                .dividedBy(fullPrice)
+                .times(100)
+                .toDecimalPlaces(0, Decimal.ROUND_HALF_UP);
+
+            return discount.toNumber();
+        },
+        {
+            header: "Скидка",
+            id: "discount",
+            Cell: ({ cell }) => {
+                const value = cell.getValue();
+                return value !== null ? `${value}%` : "-";
+            },
+        }
+    ),
     columnHelper.accessor((row) => row.quantity, {
         header: "Количество",
         id: "quantity",

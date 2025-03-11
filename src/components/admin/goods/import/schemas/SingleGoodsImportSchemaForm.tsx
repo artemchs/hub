@@ -146,12 +146,12 @@ export function SingleGoodsImportSchemaForm({
             </FormSection>
             <FormSection title="Цены">
                 <TextInput
-                    label="Колонка с полной ценой"
+                    label="Колонка со старой ценой"
                     key={form.key("schema.fullPrice")}
                     {...form.getInputProps("schema.fullPrice")}
                 />
                 <TextInput
-                    label="Колонка с ценой"
+                    label="Колонка с новой ценой"
                     key={form.key("schema.price")}
                     {...form.getInputProps("schema.price")}
                 />
