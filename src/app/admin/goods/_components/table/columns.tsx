@@ -23,7 +23,7 @@ export const goodsColumns = [
                     <Image
                         src={imageUrl}
                         alt={row.original.name}
-                        className="w-10 h-10"
+                        className="w-20 h-20"
                         fit="cover"
                     />
                     {row.original.name}
