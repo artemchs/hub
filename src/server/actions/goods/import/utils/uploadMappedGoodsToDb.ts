@@ -217,6 +217,34 @@ export const uploadMappedGoodsToDb = async ({
                 }
             }
 
+            // Validate media keys - only use existing ones
+            let validatedMediaKeys: string[] | undefined = undefined;
+            if (good.mediaKeys && good.mediaKeys.length > 0) {
+                const existingMedia = await tx.goodsMedia.findMany({
+                    where: {
+                        key: {
+                            in: good.mediaKeys,
+                        },
+                    },
+                    select: {
+                        key: true,
+                    },
+                });
+
+                if (existingMedia.length > 0) {
+                    validatedMediaKeys = existingMedia.map(
+                        (media) => media.key
+                    );
+                    console.log(
+                        `Found ${validatedMediaKeys.length} valid media keys out of ${good.mediaKeys.length} provided`
+                    );
+                } else {
+                    console.log(
+                        `None of the provided media keys exist in the database`
+                    );
+                }
+            }
+
             const payload: CreateOneGoodInput = {
                 name: good.name ?? "",
                 sku: good.sku ?? "",
@@ -224,7 +252,10 @@ export const uploadMappedGoodsToDb = async ({
                 quantity: good.quantity ? Number(good.quantity) : undefined,
                 price: price?.toNumber() ?? undefined,
                 fullPrice: fullPrice?.toNumber() ?? undefined,
-                mediaKeys: good.mediaKeys ?? undefined,
+                mediaKeys:
+                    validatedMediaKeys && validatedMediaKeys.length > 0
+                        ? validatedMediaKeys
+                        : undefined,
                 idValueIds:
                     idValueIds && idValueIds.length > 0
                         ? idValueIds
