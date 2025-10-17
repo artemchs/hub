@@ -79,7 +79,7 @@ export const buildRozetkaXml = async ({
                 {
                     name: ["Croca Shop"],
                     company: ["Croca Shop"],
-                    url: ["https://croca.shop"],
+                    url: ["https://croca.net"],
                     currencies: [
                         {
                             currency: [{ $: { id: "UAH", rate: "1" } }],
